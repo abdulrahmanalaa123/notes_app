@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:notes_app/ui_components/authentication_components/auth_button.dart';
+import 'package:provider/provider.dart';
 
 import 'controllers/auth_controller/auth_controller_provider.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +18,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -69,8 +71,13 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() async {
-    await context.read<AuthController>().SignInWithEmailAndPassword(
-        'abdulrahmanalaa497@gmail.com', '77227lmyisa');
+    try {
+      await context.read<AuthController>().SignInWithEmailAndPassword(
+          'abdulrahmanalaa497@gmail', '77227lmyisa');
+    } on FirebaseAuthException catch (error) {
+      print(error.code);
+      print(error.credential);
+    }
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -125,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            AuthButton(authFunc: () {}, text: 'Sign in')
           ],
         ),
       ),
