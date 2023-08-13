@@ -19,7 +19,7 @@ class Validators {
 
   static String? validatePassword(String? val) {
     if (val == null || !val.isValidPassword) {
-      return 'Please Enter a Valid Password Containing capital and small letters with special signs';
+      return 'Your password must be have at least 8 characters long 1 uppercase & 1 lowercase character 1 number';
     }
     return null;
   }

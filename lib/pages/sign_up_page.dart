@@ -56,7 +56,7 @@ class _SignUpState extends State<SignUp> {
             padding: const EdgeInsets.only(top: kToolbarHeight),
             primary: false,
             clipBehavior: Clip.hardEdge,
-            reverse: true,
+            reverse: false,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             //could refactor to a separate Widget and input a list and use a builder it's such a hassle for a two time use so I would rather not
             child: Form(
@@ -88,6 +88,8 @@ class _SignUpState extends State<SignUp> {
                     cursorColor: Constants.beige,
                     activeBorderColor: Constants.yellow,
                   ),
+                  //could add a linearprogress indicator for password strength
+                  //but it is useless right now
                   CustomFormField(
                     controller: passwordController,
                     label: 'Password',

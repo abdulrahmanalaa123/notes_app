@@ -1,7 +1,5 @@
 import 'package:flutter/services.dart';
 
-import '../../constants/form_validation.dart';
-import '../../constants/input_formatters.dart';
 import 'package:flutter/material.dart';
 
 class CustomFormField extends StatefulWidget {
@@ -60,11 +58,11 @@ class _CustomFormFieldState extends State<CustomFormField> {
           labelStyle: TextStyle(color: widget.labelColor),
           enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
-                color: widget.activeBorderColor,
+                color: widget.borderColor,
               ),
               borderRadius: BorderRadius.circular(10)),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: widget.borderColor),
+            borderSide: BorderSide(color: widget.activeBorderColor),
             borderRadius: BorderRadius.circular(10),
           ),
           errorBorder: OutlineInputBorder(
