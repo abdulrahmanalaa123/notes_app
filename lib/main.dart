@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:notes_app/pages/sign_up_page.dart';
 import 'package:notes_app/ui_components/authentication_components/auth_button.dart';
 import 'package:provider/provider.dart';
 
@@ -132,7 +133,14 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            AuthButton(authFunc: () {}, text: 'Sign in')
+            AuthButton(
+              authFunc: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => SignUp()));
+              },
+              text: 'Sign in',
+              shadow: false,
+            ),
           ],
         ),
       ),

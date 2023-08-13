@@ -45,26 +45,23 @@ class AuthController extends ChangeNotifier {
   ///  - Thrown if the password is invalid for the given email, or the account
   ///    corresponding to the email does not have a password set.
   ///    errors to deal with in a snackbar or a popup probably maybe in a textfield as well
-  Future<UserModel?> SignInWithEmailAndPassword(
-      String email, String password) async {
+  Future<void> SignInWithEmailAndPassword(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       _currentUser = _auth.user;
       _loginState = LoginState.loggedIn;
       notifyListeners();
-      return _currentUser;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<UserModel?> SignInAnonymous() async {
+  Future<void> SignInAnonymous() async {
     try {
       await _auth.signInAnonymously();
       _currentUser = _auth.user;
       _loginState = LoginState.loggedIn;
       notifyListeners();
-      return _currentUser;
     } catch (e) {
       rethrow;
     }
