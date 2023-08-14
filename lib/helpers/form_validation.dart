@@ -12,7 +12,7 @@ class Validators {
 
   static String? validateName(String? val) {
     if (val == null || !val.isValidName) {
-      return 'Please Enter a Valid Name';
+      return 'Please Enter First Name and Last name';
     }
     return null;
   }

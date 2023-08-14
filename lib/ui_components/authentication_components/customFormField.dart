@@ -2,6 +2,8 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
 
+import '../../constants/style_constants.dart';
+
 class CustomFormField extends StatefulWidget {
   const CustomFormField(
       {required this.controller,
@@ -11,10 +13,10 @@ class CustomFormField extends StatefulWidget {
       required this.validator,
       this.formatter,
       required this.hintText,
-      required this.labelColor,
-      required this.borderColor,
-      required this.activeBorderColor,
-      required this.cursorColor,
+      this.labelColor,
+      this.borderColor,
+      this.activeBorderColor,
+      this.cursorColor,
       this.inputSize,
       super.key});
 
@@ -25,10 +27,10 @@ class CustomFormField extends StatefulWidget {
   final String hintText;
   final FocusNode? focusNode;
   final bool isPassword;
-  final Color labelColor;
-  final Color borderColor;
-  final Color activeBorderColor;
-  final Color cursorColor;
+  final Color? labelColor;
+  final Color? borderColor;
+  final Color? activeBorderColor;
+  final Color? cursorColor;
   final double? inputSize;
 
   @override
@@ -44,7 +46,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
         autofocus: false,
         //controller is here for the submit button probably
         controller: widget.controller,
-        cursorColor: widget.cursorColor,
+        cursorColor: widget.cursorColor ?? Constants.beige,
         inputFormatters:
             (widget.formatter == null) ? null : [widget.formatter!],
         enabled: true,
@@ -55,14 +57,15 @@ class _CustomFormFieldState extends State<CustomFormField> {
         textDirection: TextDirection.ltr,
         decoration: InputDecoration(
           labelText: widget.label,
-          labelStyle: TextStyle(color: widget.labelColor),
+          labelStyle: TextStyle(color: widget.labelColor ?? Constants.beige),
           enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
-                color: widget.borderColor,
+                color: widget.borderColor ?? Constants.beige,
               ),
               borderRadius: BorderRadius.circular(10)),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: widget.activeBorderColor),
+            borderSide:
+                BorderSide(color: widget.activeBorderColor ?? Constants.yellow),
             borderRadius: BorderRadius.circular(10),
           ),
           errorBorder: OutlineInputBorder(

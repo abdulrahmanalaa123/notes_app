@@ -1,12 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:notes_app/pages/sign_up_page.dart';
+import 'package:notes_app/pages/auth_pages/sign_in_page.dart';
+import 'package:notes_app/pages/auth_pages/sign_up_page.dart';
 import 'package:notes_app/ui_components/authentication_components/auth_button.dart';
 import 'package:provider/provider.dart';
-
+import 'package:notes_app/pages/auth_pages/landing_page.dart';
 import 'constants/style_constants.dart';
-import 'controllers/auth_controller/auth_controller_provider.dart';
+import 'view_models/auth_view_model/auth_controller_provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -15,8 +16,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(
-      ChangeNotifierProvider(create: (_) => AuthController(), child: MyApp()));
+  runApp(ChangeNotifierProvider(
+      create: (_) => AuthController(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -136,12 +137,30 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             AuthButton(
               authFunc: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => SignUp()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const SignUp()));
+              },
+              text: 'Sign Up',
+              shadow: false,
+            ),
+            AuthButton(
+              authFunc: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const SignIn()));
               },
               text: 'Sign in',
               shadow: false,
             ),
+            AuthButton(
+              authFunc: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LandingPage()));
+              },
+              text: 'Landing',
+              shadow: false,
+            )
           ],
         ),
       ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../constants/form_validation.dart';
-import '../ui_components/authentication_components/customFormField.dart';
-import '../ui_components/authentication_components/auth_button.dart';
-import '../constants/style_constants.dart';
+import 'package:notes_app/helpers/form_validation.dart';
+import 'package:notes_app/ui_components/authentication_components/customFormField.dart';
+import 'package:notes_app/ui_components/authentication_components/auth_button.dart';
+import 'package:notes_app/constants/style_constants.dart';
+import 'package:notes_app/ui_components/authentication_components/auth_app_bar.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -48,7 +49,9 @@ class _SignUpState extends State<SignUp> {
       },
       child: Scaffold(
         extendBodyBehindAppBar: false,
-        appBar: buildAppBar(context, "Register"),
+        appBar: const CustomAppBar(
+          text: 'Register',
+        ),
         backgroundColor: Colors.black54,
         body: Center(
           //the first element if selected its label will be cut by the clip edge
@@ -143,24 +146,5 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
     ));
-  }
-
-  AppBar buildAppBar(BuildContext context, String text) {
-    return AppBar(
-      scrolledUnderElevation: 0,
-      backgroundColor: Colors.transparent,
-      leading: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: const Icon(
-            Icons.arrow_back_ios_new_sharp,
-            color: Constants.yellow,
-          )),
-      title: Text(
-        text,
-        style: const TextStyle(color: Constants.yellow, fontSize: 40),
-      ),
-    );
   }
 }

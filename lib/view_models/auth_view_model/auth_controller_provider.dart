@@ -79,7 +79,7 @@ class AuthController extends ChangeNotifier {
   ///  errors should be handled with the textfields and not a snackbar
 
   //sign up interface
-  Future<UserModel?> RegisterWithEmailAndPassword(
+  Future<void> RegisterWithEmailAndPassword(
       String name, String email, String password) async {
     try {
       await _auth.createAccountWithEmailAndPassword(
@@ -87,7 +87,6 @@ class AuthController extends ChangeNotifier {
       _currentUser = _auth.user;
       _loginState = LoginState.loggedIn;
       notifyListeners();
-      return _currentUser;
     } catch (e) {
       rethrow;
     }
