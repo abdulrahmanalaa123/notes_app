@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app/view_models/auth_view_model/auth_controller_provider.dart';
+import 'package:provider/provider.dart';
 import '../../helpers/form_validation.dart';
 import '../../ui_components/authentication_components/customFormField.dart';
 import '../../ui_components/authentication_components/auth_button.dart';
@@ -117,6 +119,9 @@ class _SignUpState extends State<SignUp> {
                 child: AuthButton(
                   authFunc: () {
                     _formKey.currentState!.validate();
+                    Provider.of<AuthController>(context, listen: false)
+                        .RegisterWithEmailAndPassword(nameController.text,
+                            emailController.text, passwordController.text);
                   },
                   text: "Sign Up",
                   shadow: false,

@@ -3,6 +3,8 @@ import 'package:notes_app/ui_components/authentication_components/auth_app_bar.d
 import 'package:notes_app/ui_components/authentication_components/auth_button.dart';
 import 'package:notes_app/ui_components/authentication_components/customFormField.dart';
 import 'package:notes_app/helpers/form_validation.dart';
+import 'package:notes_app/view_models/auth_view_model/auth_controller_provider.dart';
+import 'package:provider/provider.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -59,7 +61,7 @@ class _SignInState extends State<SignIn> {
                       validator: Validators.validateEmail,
                       hintText: 'Enter Your Email',
                     ),
-                    //could add a linearprogress indicator for password strength
+                    //could add a linear progress indicator for password strength
                     //but it is useless right now
                     CustomFormField(
                       controller: passwordController,
@@ -76,6 +78,9 @@ class _SignInState extends State<SignIn> {
                 child: AuthButton(
                   authFunc: () {
                     _formKey.currentState!.validate();
+                    Provider.of<AuthController>(context, listen: false)
+                        .SignInWithEmailAndPassword(
+                            emailController.text, passwordController.text);
                   },
                   text: "Sign In",
                   shadow: false,

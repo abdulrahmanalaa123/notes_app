@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import '../../constants/style_constants.dart';
 
@@ -8,25 +7,33 @@ class AuthButton extends StatelessWidget {
       {required this.authFunc,
       required this.text,
       required this.shadow,
+      this.borderColor,
+      this.bodyColor,
+      this.textColor,
       super.key});
 
   final void Function() authFunc;
   final String text;
   final bool shadow;
+  final Color? borderColor;
+  final Color? bodyColor;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: authFunc,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         width: double.infinity,
         height: 50,
         decoration: BoxDecoration(
           border: Border.all(
-              color: Constants.yellow, style: BorderStyle.solid, width: 2),
+              color: borderColor ?? Constants.yellow,
+              style: BorderStyle.solid,
+              width: 2),
           borderRadius: BorderRadius.circular(10),
-          color: Constants.beige,
+          color: bodyColor ?? Constants.beige,
           boxShadow: shadow
               ? [
                   const BoxShadow(
@@ -42,8 +49,10 @@ class AuthButton extends StatelessWidget {
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(
-                color: Colors.black, fontWeight: FontWeight.w500, fontSize: 20),
+            style: TextStyle(
+                color: textColor ?? Colors.black,
+                fontWeight: FontWeight.w500,
+                fontSize: 20),
           ),
         ),
       ),
