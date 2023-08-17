@@ -12,7 +12,8 @@ import 'package:provider/provider.dart';
 //disposes later than the use call and its supposedly a synchronous function that yet i still dont know
 //and was solved with changenotifierprovider.value which saves the object which could lead to memory leaks
 //so it didnt solve anything and that was the problem wiht changenotifier
-//although at second thought the composition model wouldve been better and the old
+//although at second thought the composition model wouldve been better and more fitting yet its of no point
+//the whole matter is trivial
 
 //ToDO
 //they might extned the same class but fuck it
