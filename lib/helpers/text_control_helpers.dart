@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 //disposes later than the use call and its supposedly a synchronous function that yet i still dont know
 //and was solved with changenotifierprovider.value which saves the object which could lead to memory leaks
 //so it didnt solve anything and that was the problem wiht changenotifier
+//although at second thought the composition model wouldve been better and the old
 
 //ToDO
 //they might extned the same class but fuck it
@@ -49,10 +50,6 @@ abstract class SignUpHelper<T extends StatefulWidget> extends State<T> {
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
   late final TextEditingController passwordConfirmController;
-  //this doesnt generate unlimited text controllers
-  //plus each use of a controller must be in place because mixing them up
-  //will lead to breaking the interface and further enhancing this would add error
-  //handling to explain why the text interface isnt working
 
   @override
   void initState() {
@@ -80,3 +77,48 @@ abstract class SignUpHelper<T extends StatefulWidget> extends State<T> {
     } catch (e) {}
   }
 }
+
+//this was the old implementation of the composititon model
+//class TextHelper {
+//  TextEditingController? _nameController;
+//  TextEditingController? _emailController;
+//  TextEditingController? _passwordController;
+//  TextEditingController? _passwordConfirmController;
+//  //this doesnt generate unlimited text controllers
+//  //plus each use of a controller must be in place because mixing them up
+//  //will lead to breaking the interface and further enhancing this would add error
+//  //handling to explain why the text interface isnt working
+//
+//  TextEditingController get nameController =>
+//      _nameController = TextEditingController();
+//  TextEditingController get emailController =>
+//      _emailController = TextEditingController();
+//  TextEditingController get passwordController =>
+//      _passwordController = TextEditingController();
+//  TextEditingController get passwordConfirmController =>
+//      _passwordConfirmController = TextEditingController();
+//
+//  @override
+//  void dispose() {
+//    _nameController?.dispose();
+//    _emailController?.dispose();
+//    _passwordController?.dispose();
+//    _passwordConfirmController?.dispose();
+//  }
+//
+//  Future<void> signIn(BuildContext context) async {
+//    try {
+//      await Provider.of<AuthController>(context, listen: false)
+//          .SignInWithEmailAndPassword(
+//              emailController.text, passwordController.text);
+//    } catch (e) {}
+//  }
+//
+//  Future<void> signUp(BuildContext context) async {
+//    try {
+//      await Provider.of<AuthController>(context, listen: false)
+//          .RegisterWithEmailAndPassword(_nameController!.text,
+//              _emailController!.text, _passwordController!.text);
+//    } catch (e) {}
+//  }
+//}
