@@ -2,6 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/view_models/auth_view_model/auth_controller_provider.dart';
 import 'package:provider/provider.dart';
 
+//just for documentation the first iteration was a changenotifier
+//then seen as useless as well as buggy
+//it was changed to a composition implementation in both signup and sign in
+//then this final implementation seems like the best in seperating concerns but still its a bit useless
+//since each helper will be used only used once and wasnt worth the 2 days spent but yet learnign a bit about stateful widget
+//and state sharing like this https://medium.com/flutter-community/a-stateset-class-part-1-2891f1a0eea1
+//as well as dealing with changenotifier a bit better and understanding how stateful widgets for some fucking reason
+//disposes later than the use call and its supposedly a synchronous function that yet i still dont know
+//and was solved with changenotifierprovider.value which saves the object which could lead to memory leaks
+//so it didnt solve anything and that was the problem wiht changenotifier
+
+//ToDO
 //they might extned the same class but fuck it
 //need to look up more on extending state<T>
 //and mixins + abstract classes
