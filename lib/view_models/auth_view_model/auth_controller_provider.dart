@@ -17,7 +17,7 @@ class AuthController extends ChangeNotifier {
       print(jwtVal);
       if (jwtVal != null) {
         if (jwtVal != comparator) {
-          _loginState = LoginState.refreshToken;
+          _loginState = LoginState.loggedIn;
         } else {
           _loginState = LoginState.loggedIn;
         }
@@ -31,6 +31,8 @@ class AuthController extends ChangeNotifier {
 
   LoginState get loginState => _loginState;
   UserModel? get currentUser => _currentUser;
+
+  //Future voids are there to enable awaiting
 
   //Login Interface
 

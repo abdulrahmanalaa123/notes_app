@@ -19,7 +19,6 @@ class CustomFormField extends StatefulWidget {
       this.cursorColor,
       this.inputSize,
       super.key});
-
   final TextEditingController controller;
   final String label;
   final String? Function(String?) validator;
@@ -38,11 +37,15 @@ class CustomFormField extends StatefulWidget {
 }
 
 class _CustomFormFieldState extends State<CustomFormField> {
+  final node = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: TextFormField(
+        focusNode: node,
+        //autovalidateMode: AutovalidateMode.onUserInteraction,
         autofocus: false,
         //controller is here for the submit button probably
         controller: widget.controller,
@@ -52,7 +55,14 @@ class _CustomFormFieldState extends State<CustomFormField> {
         enabled: true,
         style: TextStyle(color: Colors.white, fontSize: widget.inputSize ?? 14),
         obscureText: widget.isPassword,
-        validator: widget.validator,
+        validator: (val) {
+          //can be added but buggy
+          ////it affects if the user
+          //if (node.hasFocus) {
+          //  return null;
+          //}
+          return widget.validator(val);
+        },
         textInputAction: TextInputAction.next,
         textDirection: TextDirection.ltr,
         decoration: InputDecoration(

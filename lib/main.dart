@@ -23,17 +23,32 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final currenState = Provider.of<AuthController>(context).loginState;
+    //final currenState = Provider.of<AuthController>(context).loginState;
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Constants.yellow),
-          useMaterial3: true,
-          fontFamily: 'Lufga'),
-      //rebuilding the app if the user logs in or logs logs out
-      home: currenState != LoginState.loggedIn
-          ? const LandingPage()
-          : const Placeholder(),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Constants.yellow),
+            useMaterial3: true,
+            fontFamily: 'Lufga'),
+        //rebuilding the app if the user logs in or logs logs out
+        home: Consumer<AuthController>(
+          builder: (context, auth, child) {
+            return auth.loginState != LoginState.loggedIn
+                //reason its wrapped on the landing page and not multiple providers
+                // is because the controllers will be of no use If we're logged in from cache
+                //plus using the change notifier on some random part should work and would be used at some point
+                //so looking up it's errors would be useful now
+                ? LandingPage()
+                : Placeholder(
+                    color: Constants.beige,
+                    child: TextButton(
+                      child: const Text('SignOut'),
+                      onPressed: () async {
+                        await auth.SignOut();
+                      },
+                    ),
+                  );
+          },
+        ));
   }
 }

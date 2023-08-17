@@ -2,43 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/view_models/auth_view_model/auth_controller_provider.dart';
 import 'package:provider/provider.dart';
 
-class TextHelper extends ChangeNotifier {
-  late final TextEditingController _nameController;
-  late final TextEditingController _emailController;
-  late final TextEditingController _passwordController;
-  late final TextEditingController _passwordConfirmController;
+//they might extned the same class but fuck it
+//need to look up more on extending state<T>
+//and mixins + abstract classes
+abstract class SignInHelper<T extends StatefulWidget> extends State<T> {
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
 
-  TextEditingController get nameController =>
-      _nameController = TextEditingController();
-  TextEditingController get emailController =>
-      _emailController = TextEditingController();
-  TextEditingController get passwordController =>
-      _passwordController = TextEditingController();
-  TextEditingController get passwordConfirmController =>
-      _passwordConfirmController = TextEditingController();
+  @override
+  void initState() {
+    passwordController = TextEditingController();
+    emailController = TextEditingController();
+    super.initState();
+  }
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _passwordConfirmController.dispose();
+    passwordController.dispose();
+    emailController.dispose();
     super.dispose();
   }
 
-  void signIn(BuildContext context) async {
+  Future<void> signIn(BuildContext context) async {
     try {
       await Provider.of<AuthController>(context, listen: false)
           .SignInWithEmailAndPassword(
-              _emailController.text, _passwordController.text);
+              emailController.text, passwordController.text);
     } catch (e) {}
   }
+}
 
-  void signUp(BuildContext context) async {
+abstract class SignUpHelper<T extends StatefulWidget> extends State<T> {
+  late final TextEditingController nameController;
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+  late final TextEditingController passwordConfirmController;
+  //this doesnt generate unlimited text controllers
+  //plus each use of a controller must be in place because mixing them up
+  //will lead to breaking the interface and further enhancing this would add error
+  //handling to explain why the text interface isnt working
+
+  @override
+  void initState() {
+    nameController = TextEditingController();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    passwordConfirmController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    passwordConfirmController.dispose();
+    super.dispose();
+  }
+
+  Future<void> signUp(BuildContext context) async {
     try {
       await Provider.of<AuthController>(context, listen: false)
-          .RegisterWithEmailAndPassword(_nameController.text,
-              _emailController.text, _passwordController.text);
+          .RegisterWithEmailAndPassword(nameController.text,
+              emailController.text, passwordController.text);
     } catch (e) {}
   }
 }

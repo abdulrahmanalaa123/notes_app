@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/pages/auth_pages/sign_in_page.dart';
 import 'package:notes_app/ui_components/authentication_components/auth_button.dart';
-import 'sign_up_page.dart';
 import '../../constants/style_constants.dart';
+import 'package:notes_app/pages/auth_pages/sign_up_page.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -38,7 +38,7 @@ class LandingPage extends StatelessWidget {
                 AuthButton(
                   authFunc: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const SignIn()));
+                        MaterialPageRoute(builder: (context) => SignIn()));
                   },
                   text: 'Login',
                   shadow: false,
@@ -49,7 +49,7 @@ class LandingPage extends StatelessWidget {
                 AuthButton(
                   authFunc: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const SignUp()));
+                        MaterialPageRoute(builder: (context) => SignUp()));
                   },
                   text: 'Sign Up',
                   shadow: false,
