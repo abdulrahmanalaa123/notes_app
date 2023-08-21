@@ -10,8 +10,7 @@ class FirebaseService {
     if (user == null) {
       return null;
     } else {
-      return UserModel(
-          id: int.parse(user.uid), name: user.displayName, email: user.email);
+      return UserModel(id: user.uid, name: user.displayName, email: user.email);
     }
   }
 

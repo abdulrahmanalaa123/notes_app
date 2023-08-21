@@ -42,7 +42,9 @@ abstract class SignInHelper<T extends StatefulWidget> extends State<T> {
       await Provider.of<AuthController>(context, listen: false)
           .SignInWithEmailAndPassword(
               emailController.text, passwordController.text);
-    } catch (e) {}
+    } catch (e) {
+      rethrow;
+    }
   }
 }
 
@@ -75,7 +77,9 @@ abstract class SignUpHelper<T extends StatefulWidget> extends State<T> {
       await Provider.of<AuthController>(context, listen: false)
           .RegisterWithEmailAndPassword(nameController.text,
               emailController.text, passwordController.text);
-    } catch (e) {}
+    } catch (e) {
+      rethrow;
+    }
   }
 }
 

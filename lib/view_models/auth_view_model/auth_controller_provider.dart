@@ -14,7 +14,6 @@ class AuthController extends ChangeNotifier {
     String? comparator;
     _auth.tokenStream().listen((jwt) async {
       String? jwtVal = await jwt;
-      print(jwtVal);
       if (jwtVal != null) {
         if (jwtVal != comparator) {
           _loginState = LoginState.loggedIn;

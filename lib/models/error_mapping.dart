@@ -16,4 +16,11 @@ class ExceptionMapping {
     //should be validated either using the form controller or after signing up
     'weak-password': ErrorType.PasswordError,
   };
+
+  static const Map<ErrorType, String> exceptionErrorMessages = {
+    ErrorType.EmailError: 'Please check or try another email adress',
+    ErrorType.PasswordError: 'Please check and Re-enter the password',
+    ErrorType.RequestError:
+        'Make sure that the email and password are associated with an Account',
+  };
 }

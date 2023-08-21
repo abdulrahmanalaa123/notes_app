@@ -1,5 +1,5 @@
-class UserModel {
-  final int id;
+class UserModel implements Comparable {
+  final String id;
   final String? name;
   final String? email;
 
@@ -10,5 +10,11 @@ class UserModel {
   });
 
   @override
-  int get hashCode => id;
+  int compareTo(other) => other.id.compareTo(id);
+
+  @override
+  bool operator ==(covariant UserModel other) => id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

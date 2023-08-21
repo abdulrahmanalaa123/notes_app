@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes_app/main.dart';
+import 'package:notes_app/ui_components/authentication_components/loading_process_page.dart';
 import '../../helpers/form_validation.dart';
 import '../../helpers/text_control_helpers.dart';
 import '../../ui_components/authentication_components/customFormField.dart';
@@ -15,7 +15,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends SignUpHelper<SignUp> {
   final _formKey = GlobalKey<FormState>();
-
+  final loadingPage = LoadingPage();
   @override
   Widget build(BuildContext context) {
     //want to know if its an expensive operation or not well it works
@@ -96,15 +96,10 @@ class _SignUpState extends SignUpHelper<SignUp> {
                 child: AuthButton(
                   authFunc: () async {
                     if (_formKey.currentState!.validate()) {
-                      await signUp(context);
-                      if (context.mounted) {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const MyApp()),
-                          (Route<dynamic> predicate) => false,
-                        );
-                      }
+                      //gotta add either listening to the states
+                      //or just use the push replacement and adding a future builder
+                      //ill go with whatever is easier
+                      await loadingPage.signUp(signUp(context), context);
                     }
                   },
                   text: "Sign Up",
