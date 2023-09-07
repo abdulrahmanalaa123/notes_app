@@ -2,11 +2,13 @@ class UserModel implements Comparable {
   final String id;
   final String? name;
   final String? email;
+  final String? imagePath;
 
   const UserModel({
     required this.id,
     this.name,
     required this.email,
+    this.imagePath,
   });
 
   @override

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../service/auth_firebase.dart';
+import '../../repo/auth_firebase.dart';
 import '../../enums/login_state.dart';
 import '../../models/user_model.dart';
 
