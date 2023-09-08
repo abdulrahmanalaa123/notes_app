@@ -52,7 +52,7 @@ class NoteRepo {
         //TODO
         //implement a batch insertion in sqlhelper
         note.imgPaths!.map((e) async {
-          await addImage(e);
+          await addImage(e, note.id!);
         });
       }
     } catch (e) {
@@ -265,11 +265,12 @@ class NoteRepo {
   }
 
   //addImageToList
-  Future<bool> addImage(ImageModel image) async {
+  Future<bool> addImage(ImageModel image, int noteId) async {
     int? id;
     try {
       Map<String, dynamic> dataMap = image.toRow();
       dataMap['user_id'] = userId;
+      dataMap['note_id'] = noteId;
       id = await _sqlHelper.create(
           raw: false, table: TableNames.images, data: dataMap);
       if (id != 0 && id != null) {
