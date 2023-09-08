@@ -10,7 +10,7 @@ class SqlInitializationHelper {
 
   Future<void> initPath() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    finalPath = join(directory.path, 'notyetdone');
+    finalPath = join(directory.path, 'finalNoteAppDB');
   }
 
   Future<Database> create() async {
@@ -24,11 +24,11 @@ class SqlInitializationHelper {
     //should add created time to the user but ill add it later
     //should add images but ill leave it out for now
     await database.execute(TableQueries.users);
-    await database.execute(TableQueries.imageList);
+    // await database.execute(TableQueries.imageList);
     await database.execute(TableQueries.imagePath);
-    await database.execute(TableQueries.Notes);
+    await database.execute(TableQueries.notes);
     await database.execute(TableQueries.groups);
-    await database.execute(TableQueries.notesjunction);
+    await database.execute(TableQueries.notesJunction);
   }
 //    await database.execute('PRAGMA foreign_keys = ON');
 }

@@ -1,7 +1,9 @@
 import 'dart:collection';
 
+import 'image_model.dart';
 import 'notes.dart';
 
+//deprecated
 class NotesList {
   final int id;
   final int userId;
@@ -28,12 +30,12 @@ class NotesList {
         .editFields(newName: name, newText: text, newDescription: description);
   }
 
-  void addImg(Note note, {required String imgPath}) {
-    _notesList[_innerSelect(note)].addImage(imgPath: imgPath);
+  void addImg(Note note, {required ImageModel imgPath}) {
+    _notesList[_innerSelect(note)].addImage(imgPath: [imgPath]);
   }
 
-  void deleteImg(Note note, {required String imgPath}) {
-    _notesList[_innerSelect(note)].addImage(imgPath: imgPath);
+  void deleteImg(Note note, {required ImageModel imgPath}) {
+    _notesList[_innerSelect(note)].addImage(imgPath: [imgPath]);
   }
 
   void addNote(Note note) {

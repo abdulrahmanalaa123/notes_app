@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       userId: 3,
       createdAt: DateTime.now(),
       title: 'second_note',
-      isFavorite: false);
+      isFavorite: 0);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

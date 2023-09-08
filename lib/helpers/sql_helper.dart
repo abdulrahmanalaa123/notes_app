@@ -64,8 +64,12 @@ class SqlHelper {
   //table shouldnt be entered unless you have raw as false
   //since its used in the default method
   //add row
-  Future<int?> create(String? table, Map<String, dynamic>? data,
-      {required bool raw, String? query, List<String>? argumentsList}) async {
+  Future<int?> create(
+      {String? table,
+      Map<String, dynamic>? data,
+      required bool raw,
+      String? query,
+      List<String>? argumentsList}) async {
     //to access null check
     final db = _db;
 
@@ -83,7 +87,7 @@ class SqlHelper {
         if (e is DatabaseException) {
           rethrow;
         }
-        throw 'Using Non-Raw query with raw = true';
+        throw 'Using Raw query with raw = false';
       }
     } else {
       try {
@@ -96,7 +100,7 @@ class SqlHelper {
         if (e is DatabaseException) {
           rethrow;
         }
-        throw 'Using Raw query with raw = false';
+        throw 'Using Non-Raw query with raw = true';
       }
     }
   }
@@ -104,8 +108,14 @@ class SqlHelper {
   //table shouldnt be entered unless you have raw as false
   //since its used in the default method
 
-  Future<List<Map<dynamic, dynamic>>?> read(String? table, int? id, int? userId,
-      {required bool raw, String? query, List<String>? argumentsList}) async {
+  Future<List<Map<String, dynamic>>?> read(
+      {String? table,
+      int? id,
+      int? userId,
+      required bool raw,
+      String? query,
+      List<String>? argumentsList,
+      String? orderBy}) async {
     //to access null check
     final db = _db;
 
@@ -117,7 +127,7 @@ class SqlHelper {
       return null;
     }
 
-    List<Map<dynamic, dynamic>> maps;
+    List<Map<String, dynamic>> maps;
     if (!raw) {
       //since each data has id but doesnt need it but every table has user_id and probably needs it if queried on its own
       //if not just use rawQuery well i dont know how to generalize this class this is the best i can do
@@ -135,7 +145,7 @@ class SqlHelper {
         if (e is DatabaseException) {
           rethrow;
         }
-        throw 'Using Non-Raw query with raw = true';
+        throw 'Using Raw query with raw = false';
       }
     } else {
       try {
@@ -149,13 +159,19 @@ class SqlHelper {
         if (e is DatabaseException) {
           rethrow;
         }
-        throw 'Using Raw query with raw = false';
+        throw 'Using Non-Raw query with raw = true';
       }
     }
   }
 
-  Future<bool> update(String? table, Map<String, dynamic>? data, int id,
-      {required bool raw, String? query, List<String>? argumentsList}) async {
+  //should use default if updating by id like notes table
+  Future<bool> update(
+      {String? table,
+      Map<String, dynamic>? data,
+      int? id,
+      required bool raw,
+      String? query,
+      List<String>? argumentsList}) async {
     final db = _db;
 
     if (db == null) {
@@ -172,7 +188,7 @@ class SqlHelper {
         if (e is DatabaseException) {
           rethrow;
         }
-        throw 'Using Non-Raw query with raw = true';
+        throw 'Using Raw query with raw = false';
       }
     } else {
       try {
@@ -187,13 +203,18 @@ class SqlHelper {
         if (e is DatabaseException) {
           rethrow;
         }
-        throw 'Using Raw query with raw = false';
+        throw 'Using Non-Raw query with raw = true';
       }
     }
   }
 
-  Future<bool> delete(String? table, int? id, int? userId,
-      {required bool raw, String? query, List<String>? argumentsList}) async {
+  Future<bool> delete(
+      {String? table,
+      int? id,
+      int? userId,
+      required bool raw,
+      String? query,
+      List<String>? argumentsList}) async {
     //to access null check
     final db = _db;
 
@@ -216,7 +237,7 @@ class SqlHelper {
         if (e is DatabaseException) {
           rethrow;
         }
-        throw 'Using Non-Raw query with raw = true';
+        throw 'Using Raw query with raw = false';
       }
     } else {
       try {
@@ -229,7 +250,7 @@ class SqlHelper {
         if (e is DatabaseException) {
           rethrow;
         }
-        throw 'Using Raw query with raw = false';
+        throw 'Using Non-Raw query with raw = true';
       }
     }
   }

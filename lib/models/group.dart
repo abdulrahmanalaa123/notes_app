@@ -1,38 +1,42 @@
-import 'dart:collection';
-
 import 'notes.dart';
-import 'notes_list.dart';
 
 class Group {
-  final int id;
-  final int userId;
+  int? id;
   final String groupName;
-  NotesList _notesList;
+  List<Note>? notesList;
 
-  Group(
-      {required this.id,
-      required this.userId,
-      required this.groupName,
-      required NotesList notesList})
-      : _notesList = notesList;
+  Group({this.id, required this.groupName, this.notesList});
 
   //both change group and removenote could be changed
   //to a list function that takes a list of selected notes
   //and change their groups or remove them all from the group
-  UnmodifiableListView<Note> getAll() {
-    return _notesList.selectAll();
+
+  void addToGroup(List<Note> note) {
+    notesList ??= [];
+    notesList!.addAll(note);
   }
 
-  void addToGroup(Note note) {
-    _notesList.addNote(note);
+  void setId(int newId) {
+    id ??= newId;
   }
 
   void removeNote(Note note) {
-    _notesList.deleteNote(note);
+    notesList?.remove(note);
   }
 
   void changeGroup(Note note, covariant Group group) {
     removeNote(note);
-    group.addToGroup(note);
+    group.addToGroup([note]);
+  }
+
+  factory Group.fromRow(Map<String, dynamic> row) =>
+      Group(id: row['id'], groupName: row['group_name']);
+
+  Map<String, dynamic> toRow() {
+    Map<String, dynamic> initialMap = {'group_name': groupName};
+    if (id != null) {
+      initialMap['id'] = id;
+    }
+    return initialMap;
   }
 }

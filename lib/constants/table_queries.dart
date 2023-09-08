@@ -9,24 +9,29 @@ class TableQueries {
         );''';
 
   static const imageList =
-      'CREATE TABLE ${TableNames.imageList}(id INTEGER PRIMARY KEY AUTOINCREMENT);';
+      'CREATE TABLE ${TableNames.imageList}(id INTEGER PRIMARY KEY AUTOINCREMENT,);';
   static const imagePath = '''        
   CREATE TABLE ${TableNames.images}(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           path TEXT NOT NULL,
           user_id INTEGER,
-          image_list_id INTEGER,
+          note_id INTEGER,
           FOREIGN KEY(user_id)
             REFERENCES Users(id)
               ON DELETE CASCADE
               ON UPDATE NO ACTION,
-          FOREIGN KEY(image_list_id)
-            REFERENCES ImageLists(id)
+          FOREIGN KEY(note_id)
+            REFERENCES Notes(id)
               ON DELETE CASCADE
-              ON UPDATE NO ACTION
+              ON UPDATE NO ACTION,
         );
         ''';
-  static const Notes = '''    
+  //image_list_id INTEGER,
+  // FOREIGN KEY(image_list_id)
+  // REFERENCES ImageLists(id)
+  // ON DELETE CASCADE
+  // ON UPDATE NO ACTION
+  static const notes = '''
   CREATE TABLE ${TableNames.notes}(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           created_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -35,16 +40,11 @@ class TableQueries {
           description TEXT,
           is_favorite INTEGER DEFAULT 0,
           last_edited TEXT,
-          image_list_id INTEGER NULL,
           user_id INTEGER,
           FOREIGN KEY(user_id)
             REFERENCES Users(id)
               ON DELETE CASCADE
               ON UPDATE NO ACTION,
-          FOREIGN KEY(image_list_id)
-            REFERENCES ImageLists(id)
-              ON DELETE SET NULL
-              ON UPDATE NO ACTION
         );
         ''';
   static const groups = '''        
@@ -58,7 +58,7 @@ class TableQueries {
               ON UPDATE NO ACTION
         );
         ''';
-  static const notesjunction = '''
+  static const notesJunction = '''
         CREATE TABLE ${TableNames.notesJunc}(
           note_id INTEGER,
           group_id INTEGER NULL,
