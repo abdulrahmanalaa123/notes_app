@@ -91,18 +91,15 @@ class NoteRepo {
 
   //updateNote
   Future<bool> updateNote(Note note) async {
-    bool state = false;
     try {
-      state = await _sqlHelper.update(
+      return await _sqlHelper.update(
           table: TableNames.notes,
           data: note.toRow(),
           id: note.id!,
           raw: false);
     } catch (e) {
-      print(e);
-      return state;
+      return false;
     }
-    return state;
     //id will be always not null since the above insertion went smoothly
     //either all of these should be a transaction
     //or shouldnt since transactions would be an overhead of computing
@@ -147,6 +144,7 @@ class NoteRepo {
       //select all images with the note_id = noteid
       return await _noteAddImagesToInstance(note);
     } catch (e) {
+      //could return null but this is basic so it shouldnt be allowed
       print('Error is: $e');
       rethrow;
     }
@@ -262,6 +260,51 @@ class NoteRepo {
     //   return false;
     // }
     // return state;
+  }
+
+  //addNotetoGroup
+  Future<bool> addNoteToGroup(Note note, Group group) async {
+    try {
+      _sqlHelper.create(
+          raw: false,
+          table: TableNames.notesJunc,
+          data: {'note_id': note.id, 'group_id': group.id});
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  //removeNoteFromGroup
+  Future<bool> removeNoteFromGroup(Note note, Group group) async {
+    try {
+      return _sqlHelper.update(
+          raw: true,
+          query:
+              'UPDATE ${TableNames.notesJunc} SET group_id = NULL WHERE note_id = ? AND group_id = ?',
+          argumentsList: [note.id.toString(), group.id.toString()]);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> changeGroup(
+      {required Note note,
+      required Group group1,
+      required Group group2}) async {
+    try {
+      return _sqlHelper.update(
+          raw: true,
+          query:
+              'UPDATE ${TableNames.notesJunc} SET group_id = ? WHERE note_id = ? AND group_id = ?',
+          argumentsList: [
+            group2.id.toString(),
+            note.id.toString(),
+            group1.id.toString()
+          ]);
+    } catch (e) {
+      return false;
+    }
   }
 
   //addImageToList
