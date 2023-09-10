@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app/helpers/sp_helper.dart';
+import 'package:notes_app/repo/notes_repo.dart';
 import '../../repo/auth_firebase.dart';
 import '../../enums/login_state.dart';
 import '../../models/user_model.dart';
@@ -6,10 +8,23 @@ import '../../models/user_model.dart';
 class AuthController extends ChangeNotifier {
   final FirebaseService _auth;
   UserModel? _currentUser;
+  //this is considered coupling as well
+  //dont know how to do it any other way atm
+  //no way to seperate except make the repo listen to the controller
+  //or make the shared pref a provider and listen
+  //which is layers of complexity so fk it stay like this for now
+  //so i could listen to changes
+  //how this works is i made the noterepo a singleton
+  //just to access the same repo and updating would edit in the view model as well
 
+  final SharedPreferenceHelper _storageHelper;
+  final NoteRepo _noteRepo;
   LoginState _loginState = LoginState.signedOut;
 
-  AuthController() : _auth = FirebaseService() {
+  AuthController()
+      : _auth = FirebaseService(),
+        _storageHelper = SharedPreferenceHelper(),
+        _noteRepo = NoteRepo() {
     //comparator initialized to null
     //comparator is the past token
     String? comparator;
@@ -53,6 +68,7 @@ class AuthController extends ChangeNotifier {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       _currentUser = _auth.user;
       _loginState = LoginState.loggedIn;
+      await _updateRepo(false);
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -64,6 +80,7 @@ class AuthController extends ChangeNotifier {
       await _auth.signInAnonymously();
       _currentUser = _auth.user;
       _loginState = LoginState.loggedIn;
+      await _updateRepo(false);
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -89,6 +106,8 @@ class AuthController extends ChangeNotifier {
           name: name, email: email, password: password);
       _currentUser = _auth.user;
       _loginState = LoginState.loggedIn;
+      await _updateRepo(false);
+
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -101,6 +120,14 @@ class AuthController extends ChangeNotifier {
     await _auth.signOut();
     _currentUser = _auth.user;
     _loginState = LoginState.signedOut;
+    await _updateRepo(true);
+
     notifyListeners();
+  }
+
+  Future<void> _updateRepo(bool remove) async {
+    if (remove) await _storageHelper.remove('currentUser');
+    await _storageHelper.set(_currentUser?.id, 'currentUser');
+    await _noteRepo.updateUserId();
   }
 }

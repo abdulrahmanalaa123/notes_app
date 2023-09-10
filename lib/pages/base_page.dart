@@ -43,7 +43,6 @@ class _BasePageState extends State<BasePage> {
                             builder: (context) => const TestingNote()));
                     if (context.mounted) {
                       print(context.read<AuthController>().currentUser?.id);
-                      print(context.read<NotesViewModel>().userId);
                     }
                     print(await context.read<NotesViewModel>().addNote(result));
                     print(await context.read<NotesViewModel>().notesList);

@@ -1,6 +1,7 @@
 import 'package:notes_app/constants/table_names.dart';
 import 'package:notes_app/helpers/sql_helper.dart';
 
+import '../helpers/sp_helper.dart';
 import '../models/group.dart';
 import '../models/image_model.dart';
 import '../models/notes.dart';
@@ -14,11 +15,20 @@ import '../models/notes.dart';
 //error handling in either this Repo
 //or in the viewModel or controller
 class NoteRepo {
+  static final NoteRepo _noteRepo = NoteRepo._();
+
   final SqlHelper _sqlHelper;
   String? userId;
-  NoteRepo({required this.userId}) : _sqlHelper = SqlHelper();
+  SharedPreferenceHelper? _storageHelper;
 
+  NoteRepo._() : _sqlHelper = SqlHelper();
+
+  factory NoteRepo() {
+    return _noteRepo;
+  }
   Future<bool> init() async {
+    _storageHelper = SharedPreferenceHelper();
+    userId = await _storageHelper!.get('currentUser', String);
     return await _sqlHelper.open();
   }
 
@@ -357,7 +367,7 @@ class NoteRepo {
     return await _sqlHelper.close();
   }
 
-  void changeUserId(String? newUserId) {
-    userId = newUserId;
+  Future<void> updateUserId() async {
+    userId = await _storageHelper?.get('currentUser', String);
   }
 }

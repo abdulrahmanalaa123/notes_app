@@ -13,7 +13,6 @@ import 'package:notes_app/main.dart';
 class LoadingPage {
   ErrorIndicator errorIndicator = ErrorIndicator();
   LoadingIndicator loadingIndicator = LoadingIndicator();
-  LoadingPage();
 
   //assigning future void to enable awaiting the method ipresume if i dont it wouldnt be waited as tried before
   //or maybe it is some sort of mistake on my hand

@@ -86,7 +86,7 @@ class _MyAppState extends State<MyApp> {
 
               ? const LandingPage()
               : ChangeNotifierProvider(
-                  create: (_) => NotesViewModel(userId: auth.currentUser?.id),
+                  create: (_) => NotesViewModel(),
                   child: BasePage(),
                 );
         }));

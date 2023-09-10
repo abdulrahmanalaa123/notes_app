@@ -16,14 +16,12 @@ import '../../models/notes.dart';
 //the user_id is null when logging in from cache is an issue
 //and i removed the dispose method  from the view model needs to be reassigned and invoked properly
 class NotesViewModel extends ChangeNotifier {
-  String? userId;
   List<Note>? _notesList;
   List<Group>? _groupList;
   final NoteRepo? _noteRepo;
   bool _open = false;
 
-  NotesViewModel({required this.userId})
-      : _noteRepo = NoteRepo(userId: userId) {
+  NotesViewModel() : _noteRepo = NoteRepo() {
     Future.microtask(() => init());
   }
 
@@ -33,7 +31,6 @@ class NotesViewModel extends ChangeNotifier {
     _open = await _noteRepo!.init();
     await readAll();
     print(_notesList);
-    print(userId);
     print(_open);
   }
 
@@ -58,16 +55,16 @@ class NotesViewModel extends ChangeNotifier {
   Future<void> dispose() async {
     _notesList?.clear();
     _groupList?.clear();
-    await _noteRepo?.dispose();
+//    await _noteRepo?.dispose();
     notifyListeners();
     super.dispose();
   }
 
-  void updateUser(String? newId) {
-    userId = newId;
-    _noteRepo?.changeUserId(newId);
-    notifyListeners();
-  }
+  // void updateUser(String? newId) {
+  //   userId = newId;
+  //   _noteRepo?.changeUserId(newId);
+  //   notifyListeners();
+  // }
 
   Future<bool> addNote(Note note) async {
     if (!_open) {
