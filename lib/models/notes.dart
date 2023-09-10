@@ -4,7 +4,7 @@ part 'notes.g.dart';
 
 @JsonSerializable()
 class Note implements Comparable {
-  late final int? id;
+  late int? id;
   //@JsonKey(name: 'user_id')
   //final int userId;
   @JsonKey(name: 'created_at')
@@ -86,7 +86,7 @@ class Note implements Comparable {
   //compare to another note if not just compare it to ''
   //i guess this works idk yet
   int compareByText(covariant Note other) => body!.compareTo(other.body ?? '');
-
+  int compareByTitle(covariant Note other) => title.compareTo(other.title);
   @override
   bool operator ==(covariant Note other) => hashCode == other.hashCode;
   @override
@@ -108,6 +108,7 @@ class Note implements Comparable {
       'is_favorite': isFavorite,
     };
     if (lastEdited != null) {
+      lastEdited = DateTime.now();
       initialMap['last_edited'] = lastEdited?.toIso8601String();
     }
     //this would help not creating two rows of the same note

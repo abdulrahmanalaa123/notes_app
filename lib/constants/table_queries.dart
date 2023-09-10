@@ -2,7 +2,7 @@ import 'table_names.dart';
 
 class TableQueries {
   static const users = '''        CREATE TABLE ${TableNames.users}(
-          id INTEGER PRIMARY KEY,
+          id TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           email TEXT NOT NULL UNIQUE,
           image_path TEXT
@@ -14,7 +14,7 @@ class TableQueries {
   CREATE TABLE ${TableNames.images}(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           path TEXT NOT NULL,
-          user_id INTEGER,
+          user_id TEXT,
           note_id INTEGER,
           FOREIGN KEY(user_id)
             REFERENCES Users(id)
@@ -23,7 +23,7 @@ class TableQueries {
           FOREIGN KEY(note_id)
             REFERENCES Notes(id)
               ON DELETE CASCADE
-              ON UPDATE NO ACTION,
+              ON UPDATE NO ACTION
         );
         ''';
   //image_list_id INTEGER,
@@ -40,18 +40,18 @@ class TableQueries {
           description TEXT,
           is_favorite INTEGER DEFAULT 0,
           last_edited TEXT,
-          user_id INTEGER,
+          user_id TEXT NOT NULL,
           FOREIGN KEY(user_id)
             REFERENCES Users(id)
               ON DELETE CASCADE
-              ON UPDATE NO ACTION,
+              ON UPDATE NO ACTION
         );
         ''';
   static const groups = '''        
          CREATE TABLE ${TableNames.group}(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           group_name TEXT NOT NULL, 
-          user_id INTEGER,
+          user_id TEXT NOT NULL,
           FOREIGN KEY(user_id)
             REFERENCES Users(id)
               ON DELETE CASCADE

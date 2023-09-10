@@ -10,7 +10,7 @@ class SqlInitializationHelper {
 
   Future<void> initPath() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    finalPath = join(directory.path, 'finalNoteAppDB');
+    finalPath = join(directory.path, 'newDB');
   }
 
   Future<Database> create() async {

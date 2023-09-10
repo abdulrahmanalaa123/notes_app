@@ -23,9 +23,11 @@ class SqlHelper {
     //not putting _db = null check since already been checked above
     await _helper.initPath();
     bool alreadyExists = await databaseExists(_helper.finalPath);
-    print(alreadyExists);
+    print('this database exists: $alreadyExists');
     if (alreadyExists) {
       _db = await openDatabase(_helper.finalPath);
+      print(_db);
+      print('Database Opened');
       return true;
     }
 
@@ -111,7 +113,7 @@ class SqlHelper {
   Future<List<Map<String, dynamic>>?> read(
       {String? table,
       int? id,
-      int? userId,
+      String? userId,
       required bool raw,
       String? query,
       List<String>? argumentsList,
@@ -211,7 +213,7 @@ class SqlHelper {
   Future<bool> delete(
       {String? table,
       int? id,
-      int? userId,
+      String? userId,
       required bool raw,
       String? query,
       List<String>? argumentsList}) async {

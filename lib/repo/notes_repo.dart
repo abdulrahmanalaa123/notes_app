@@ -15,24 +15,23 @@ import '../models/notes.dart';
 //or in the viewModel or controller
 class NoteRepo {
   final SqlHelper _sqlHelper;
-  int userId;
+  String? userId;
   NoteRepo({required this.userId}) : _sqlHelper = SqlHelper();
 
-  void init() {
-    _sqlHelper.open();
+  Future<bool> init() async {
+    return await _sqlHelper.open();
   }
 
   //addnote
   //the note is pass by reference so all we need is a true and false indicator
-  //TODO
-  //add image model and update read after adding
-  //and then add addimagetolist and removeimagefromlist
   Future<bool> addNote(Note note) async {
     int? id;
     try {
       //adding userId to the row before adding it to the database
       Map<String, dynamic> dataMap = note.toRow();
       dataMap['user_id'] = userId;
+      print(userId);
+      print(dataMap);
       id = await _sqlHelper.create(
           table: TableNames.notes, data: dataMap, raw: false);
       if (id != null && id != 0) {
@@ -130,7 +129,7 @@ class NoteRepo {
   //although i really cant think of a usecase for it
   //since im coding this before the UI its here for convenience and completing the CRUD
   //readNote
-  Future<Note?> readNote(int id, int userId) async {
+  Future<Note?> readNote(int id) async {
     try {
       //get the note
       List<Map<String, dynamic>>? map = await _sqlHelper.read(
@@ -151,7 +150,7 @@ class NoteRepo {
   }
 
   //readAll
-  Future<List<Note>> readAll(int userId) async {
+  Future<List<Note>> readAll() async {
     try {
       //get the note
       List<Map<String, dynamic>>? map = await _sqlHelper.read(
@@ -354,11 +353,11 @@ class NoteRepo {
     return note;
   }
 
-  void dispose() {
-    _sqlHelper.close();
+  Future<bool> dispose() async {
+    return await _sqlHelper.close();
   }
 
-  void changeUserId(int newUserId) {
+  void changeUserId(String? newUserId) {
     userId = newUserId;
   }
 }

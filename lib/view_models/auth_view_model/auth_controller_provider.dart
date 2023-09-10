@@ -11,11 +11,13 @@ class AuthController extends ChangeNotifier {
 
   AuthController() : _auth = FirebaseService() {
     //comparator initialized to null
+    //comparator is the past token
     String? comparator;
     _auth.tokenStream().listen((jwt) async {
       String? jwtVal = await jwt;
       if (jwtVal != null) {
         if (jwtVal != comparator) {
+          //this means that the token is reset but it gives issues so its logged in as well
           _loginState = LoginState.loggedIn;
         } else {
           _loginState = LoginState.loggedIn;
