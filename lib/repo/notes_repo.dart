@@ -16,7 +16,7 @@ import '../models/notes.dart';
 //or in the viewModel or controller
 class NoteRepo {
   static final NoteRepo _noteRepo = NoteRepo._();
-
+  bool _open = false;
   final SqlHelper _sqlHelper;
   String? userId;
   SharedPreferenceHelper? _storageHelper;
@@ -29,9 +29,11 @@ class NoteRepo {
   Future<bool> init() async {
     _storageHelper = SharedPreferenceHelper();
     userId = await _storageHelper!.get('currentUser', String);
-    return await _sqlHelper.open();
+    _open = await _sqlHelper.open();
+    return _open;
   }
 
+  get open => _open;
   //addnote
   //the note is pass by reference so all we need is a true and false indicator
   Future<bool> addNote(Note note) async {
@@ -56,12 +58,20 @@ class NoteRepo {
     //id will be always not null since the above insertion went smoothly
 
     try {
-      if (note.imgPaths != null) {
+      if (note.noteData.imgPaths != null) {
         //should be replaced by a batch insertion in the sqlhelper but left as is for now
         //TODO
         //implement a batch insertion in sqlhelper
-        note.imgPaths!.map((e) async {
+        note.noteData.imgPaths!.map((e) async {
           await addImage(e, note.id!);
+        });
+      }
+      if (note.noteData.groups != null) {
+        //should be replaced by a batch insertion in the sqlhelper but left as is for now
+        //TODO
+        //implement a batch insertion in sqlhelper
+        note.noteData.groups!.map((e) async {
+          await addNoteToGroup(note, e);
         });
       }
     } catch (e) {
@@ -81,7 +91,7 @@ class NoteRepo {
       print(e);
       return false;
     }
-    //id will be always not null since the above insertion went smoothly
+
     //there is no need for this because i think cascade is set
     //ill leave it commented in case it doesnt work
     // try {
@@ -100,15 +110,20 @@ class NoteRepo {
 
   //updateNote
   Future<bool> updateNote(Note note) async {
+    bool state;
     try {
-      return await _sqlHelper.update(
+      state = await _sqlHelper.update(
           table: TableNames.notes,
           data: note.toRow(),
           id: note.id!,
           raw: false);
+      return state;
     } catch (e) {
       return false;
     }
+
+    //TODO
+    //implement reading changed images in sp or some sort instead of readling all images then comparing to my current list
     //id will be always not null since the above insertion went smoothly
     //either all of these should be a transaction
     //or shouldnt since transactions would be an overhead of computing
@@ -118,22 +133,22 @@ class NoteRepo {
     //will be the link of the image or the path in the phone and if its not there then you cant update it
     //and updating it would require me to add an image model and have an id so it seems redundant so im removing it in update in of itself
     //since the methods of updating would be adding or deleting and the interface exists
-    // try {
-    //   if (newPaths != null && state) {
-    //     newPaths.map((e) async {
-    //       await _sqlHelper.update(
-    //           table: TableNames.imageList,
-    //           data: {'path': e, 'img_list_id': note.imgListId},
-    //           id: note.userId,
-    //           raw: true);
-    //     });
-    //     //no mapping is done for the image paths because the cascade property is set
-    //   }
-    // } catch (e) {
-    //   print(e);
-    //   return false;
-    // }
-    // return true;
+    //try {
+    //  if (state) {
+    //    newPaths.map((e) async {
+    //      await _sqlHelper.update(
+    //          table: TableNames.imageList,
+    //          data: {'path': e, 'img_list_id': note.imgListId},
+    //          id: note.userId,
+    //          raw: true);
+    //    });
+    //    //no mapping is done for the image paths because the cascade property is set
+    //  }
+    //} catch (e) {
+    //  print(e);
+    //  return false;
+    //}
+    //return true;
   }
 
   //although i really cant think of a usecase for it
@@ -149,9 +164,11 @@ class NoteRepo {
         return null;
       }
 
-      final note = Note.fromRow(map.first);
+      //just to ensureDuplication
+      Note note = Note.fromRow(map.first);
       //select all images with the note_id = noteid
-      return await _noteAddImagesToInstance(note);
+      note = await _noteAddImagesToInstance(note);
+      return await _noteAddGroupsToInstance(note);
     } catch (e) {
       //could return null but this is basic so it shouldnt be allowed
       print('Error is: $e');
@@ -173,21 +190,28 @@ class NoteRepo {
         return [];
       }
 
-      final listOfNotes = map.map((e) => Note.fromRow(e));
-      //select all images with the note_id = noteid
-      final finalList = await Future.wait(listOfNotes.map((note) async {
-        return await _noteAddImagesToInstance(note);
-      }).toList());
-
-      return finalList;
+      return await _notesFromRows(map);
     } catch (e) {
       print("Error is $e");
       rethrow;
     }
   }
 
+  Future<List<Note>> _notesFromRows(List<Map<String, dynamic>> map) async {
+    final listOfNotes = map.map((e) => Note.fromRow(e));
+    //select all images with the note_id = noteid
+    final finalList = await Future.wait(listOfNotes.map((note) async {
+      note = await _noteAddImagesToInstance(note);
+      return await _noteAddGroupsToInstance(note);
+    }).toList());
+
+    return finalList;
+  }
+
   //readGroup
-  Future<bool> readGroupNotes(Group group) async {
+  //this is probably a useless method i couldnt imagine a usecase
+  //its here in case i need it
+  Future<List<Note>> readGroupNotes(Group group) async {
     try {
       //get the note
       List<Map<String, dynamic>>? map = await _sqlHelper.read(
@@ -197,17 +221,10 @@ class NoteRepo {
           argumentsList: [group.id.toString()]);
       //only null if not initialized
       if (map == null || map.isEmpty) {
-        return false;
+        return [];
       }
 
-      final listOfNotes = map.map((e) => Note.fromRow(e));
-      //select all images with the note_id = noteid
-      final finalList = await Future.wait(listOfNotes.map((note) async {
-        return await _noteAddImagesToInstance(note);
-      }).toList());
-
-      group.addToGroup(finalList);
-      return true;
+      return _notesFromRows(map);
     } catch (e) {
       print("Error is $e");
       rethrow;
@@ -225,21 +242,6 @@ class NoteRepo {
       print(e);
       return false;
     }
-    //also could be optimized by batch operations
-    //by adding a batch input and editing or creating a batch option of all functions
-    //but fuck it
-    if (group.notesList != null) {
-      try {
-        group.notesList!.map((e) async {
-          await _sqlHelper.create(
-              raw: false,
-              table: TableNames.notesJunc,
-              data: {'note_id': e.id, 'group_id': group.id});
-        });
-      } catch (e) {
-        return false;
-      }
-    }
     return true;
   }
 
@@ -254,7 +256,6 @@ class NoteRepo {
       print(e);
       return false;
     }
-    //id will be always not null since the above insertion went smoothly
     //there is no need for this because i think cascade is set
     //ill leave it commented in case it doesnt work
     // try {
@@ -274,10 +275,11 @@ class NoteRepo {
   //addNotetoGroup
   Future<bool> addNoteToGroup(Note note, Group group) async {
     try {
-      _sqlHelper.create(
+      await _sqlHelper.create(
           raw: false,
           table: TableNames.notesJunc,
           data: {'note_id': note.id, 'group_id': group.id});
+      note.noteData.addToGroup(newGroups: [group]);
       return true;
     } catch (e) {
       return false;
@@ -287,11 +289,13 @@ class NoteRepo {
   //removeNoteFromGroup
   Future<bool> removeNoteFromGroup(Note note, Group group) async {
     try {
-      return _sqlHelper.update(
+      await _sqlHelper.update(
           raw: true,
           query:
               'UPDATE ${TableNames.notesJunc} SET group_id = NULL WHERE note_id = ? AND group_id = ?',
           argumentsList: [note.id.toString(), group.id.toString()]);
+      note.noteData.removeFromGroup(group: group);
+      return true;
     } catch (e) {
       return false;
     }
@@ -302,7 +306,7 @@ class NoteRepo {
       required Group group1,
       required Group group2}) async {
     try {
-      return _sqlHelper.update(
+      await _sqlHelper.update(
           raw: true,
           query:
               'UPDATE ${TableNames.notesJunc} SET group_id = ? WHERE note_id = ? AND group_id = ?',
@@ -311,6 +315,9 @@ class NoteRepo {
             note.id.toString(),
             group1.id.toString()
           ]);
+      note.noteData.removeFromGroup(group: group1);
+      note.noteData.addToGroup(newGroups: [group2]);
+      return true;
     } catch (e) {
       return false;
     }
@@ -358,7 +365,23 @@ class NoteRepo {
       final imgList = imgMap.map((e) {
         return ImageModel.fromRow(e);
       }).toList();
-      note.addImage(imgPath: imgList);
+      note.noteData.addImage(imgPath: imgList);
+    }
+    return note;
+  }
+
+  Future<Note> _noteAddGroupsToInstance(Note note) async {
+    List<Map<String, dynamic>>? groupMap = await _sqlHelper.read(
+        raw: true,
+        query: 'SELECT * from ${TableNames.notesJunc} WHERE note_id = ?',
+        argumentsList: [note.id.toString()]);
+    if (groupMap == null || groupMap.isEmpty) {
+      return note;
+    } else {
+      final groupList = groupMap.map((e) {
+        return Group.fromRow(e);
+      }).toList();
+      note.noteData.addToGroup(newGroups: groupList);
     }
     return note;
   }

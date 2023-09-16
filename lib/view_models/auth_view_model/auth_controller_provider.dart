@@ -17,6 +17,10 @@ class AuthController extends ChangeNotifier {
   //how this works is i made the noterepo a singleton
   //just to access the same repo and updating would edit in the view model as well
 
+  //couldve made a sp provider with a watcher for the userId and injecting it into the notesViewModel when instantiating it
+  //which would seperate concerns and detach the _noteRepo from the authcontroller and not needing to update after each operation
+  //but ill stick to this implementation because this application has took too long and has gotten way too complex for no reason
+
   final SharedPreferenceHelper _storageHelper;
   final NoteRepo _noteRepo;
   LoginState _loginState = LoginState.signedOut;
@@ -28,8 +32,12 @@ class AuthController extends ChangeNotifier {
     //comparator initialized to null
     //comparator is the past token
     String? comparator;
+
     _auth.tokenStream().listen((jwt) async {
       String? jwtVal = await jwt;
+      //solving the hot restart bug in firebase
+      print('we are hjere stream subscriber');
+      print('the user is ${_currentUser?.id}');
       if (jwtVal != null) {
         if (jwtVal != comparator) {
           //this means that the token is reset but it gives issues so its logged in as well
@@ -37,10 +45,15 @@ class AuthController extends ChangeNotifier {
         } else {
           _loginState = LoginState.loggedIn;
         }
-        comparator = await jwt;
+        //this would happen if the user is null but the token is valid so dont change user
+        //sign out would register
+        //updating the repo gives some wierd interaction where it would take longer before it notifies users of the current
+        //still valid token
       } else {
         _loginState = LoginState.signedOut;
       }
+      comparator = jwtVal;
+
       notifyListeners();
     });
   }
@@ -67,7 +80,6 @@ class AuthController extends ChangeNotifier {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       _currentUser = _auth.user;
-      _loginState = LoginState.loggedIn;
       await _updateRepo(false);
       notifyListeners();
     } catch (e) {
@@ -79,7 +91,6 @@ class AuthController extends ChangeNotifier {
     try {
       await _auth.signInAnonymously();
       _currentUser = _auth.user;
-      _loginState = LoginState.loggedIn;
       await _updateRepo(false);
       notifyListeners();
     } catch (e) {
@@ -105,9 +116,7 @@ class AuthController extends ChangeNotifier {
       await _auth.createAccountWithEmailAndPassword(
           name: name, email: email, password: password);
       _currentUser = _auth.user;
-      _loginState = LoginState.loggedIn;
       await _updateRepo(false);
-
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -119,15 +128,17 @@ class AuthController extends ChangeNotifier {
   Future<void> SignOut() async {
     await _auth.signOut();
     _currentUser = _auth.user;
-    _loginState = LoginState.signedOut;
     await _updateRepo(true);
-
     notifyListeners();
   }
 
   Future<void> _updateRepo(bool remove) async {
-    if (remove) await _storageHelper.remove('currentUser');
-    await _storageHelper.set(_currentUser?.id, 'currentUser');
+    if (remove) {
+      await _storageHelper.remove('currentUser');
+    } else {
+      await _storageHelper.set(_currentUser?.id, 'currentUser');
+    }
+    print('updating');
     await _noteRepo.updateUserId();
   }
 }

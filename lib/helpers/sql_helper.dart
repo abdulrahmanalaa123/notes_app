@@ -136,7 +136,7 @@ class SqlHelper {
       //really my mind is just giving up on this so this is the best ive reached so far
       try {
         maps = await db.query(table!,
-            where: id != null ? "id = ? AND user_id = ?" : 'user_id = ?',
+            where: id != null ? "id = ? " : 'user_id = ?',
             whereArgs: id != null ? [id, userId] : [userId]);
         if (maps.isNotEmpty) {
           return maps;
@@ -230,7 +230,7 @@ class SqlHelper {
       //really my mind is just giving up on this so this is the best ive reached so far
       try {
         await db.delete(table!,
-            where: id != null ? "id = ? AND user_id = ?" : 'user_id = ?',
+            where: id != null ? "id = ?" : 'user_id = ?',
             whereArgs: id != null ? [id, userId] : [userId]);
         return true;
       } catch (e) {

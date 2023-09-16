@@ -15,8 +15,33 @@ class BasePage extends StatefulWidget {
 }
 
 class _BasePageState extends State<BasePage> {
+  bool initialized = false;
+
+  customInit() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      await Provider.of<NotesViewModel>(context, listen: false).init();
+    });
+    setState(() {
+      initialized = true;
+    });
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+
+    final modalRoute = ModalRoute.of(context)?.isActive;
+    print('modalRoute ffs:$modalRoute');
+    if (modalRoute != null && modalRoute && !initialized) {
+      print('initing first time ever');
+      customInit();
+    }
+  }
+
+  //single instance of the Noterepo so initializing here would give an initialized instance to all
   @override
   Widget build(BuildContext context) {
+    print('rebuilding basePage');
     final notesList = context.watch<NotesViewModel>().notesList;
     return Scaffold(
         appBar: AppBar(
@@ -62,9 +87,10 @@ class _BasePageState extends State<BasePage> {
                           itemBuilder: (context, index) {
                             return Wrap(
                               children: [
-                                Text(notesList[index].title ?? 'null'),
-                                Text(notesList[index].body ?? 'null'),
-                                Text(notesList[index].description ?? 'null'),
+                                Text(notesList[index].noteData.title ?? 'null'),
+                                Text(notesList[index].noteData.body ?? 'null'),
+                                Text(notesList[index].noteData.description ??
+                                    'null'),
                               ],
                             );
                           })

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app/models/notes_data.dart';
 
 import '../models/notes.dart';
 
@@ -54,9 +55,11 @@ class _TestingNoteState extends State<TestingNote> {
                 Navigator.pop(
                     context,
                     Note(
-                        body: bodyController.text,
-                        title: titleController.text,
-                        description: descriptionController.text,
+                        noteData: NoteData(
+                          body: bodyController.text,
+                          title: titleController.text,
+                          description: descriptionController.text,
+                        ),
                         createdAt: DateTime.now()));
               },
               child: const Text('Save your Note'))

@@ -4,6 +4,7 @@ import 'image_model.dart';
 import 'notes.dart';
 
 //deprecated
+@deprecated
 class NotesList {
   final int id;
   final int userId;
@@ -26,16 +27,16 @@ class NotesList {
   }
 
   void edit(Note note, {String? name, String? text, String? description}) {
-    _notesList[_innerSelect(note)]
-        .editFields(newName: name, newText: text, newDescription: description);
+    // _notesList[_innerSelect(note)]
+    //     .editFields(newName: name, newText: text, newDescription: description);
   }
 
   void addImg(Note note, {required ImageModel imgPath}) {
-    _notesList[_innerSelect(note)].addImage(imgPath: [imgPath]);
+    //_notesList[_innerSelect(note)].addImage(imgPath: [imgPath]);
   }
 
   void deleteImg(Note note, {required ImageModel imgPath}) {
-    _notesList[_innerSelect(note)].addImage(imgPath: [imgPath]);
+    // _notesList[_innerSelect(note)].addImage(imgPath: [imgPath]);
   }
 
   void addNote(Note note) {

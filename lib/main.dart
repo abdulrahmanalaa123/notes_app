@@ -9,19 +9,6 @@ import 'constants/style_constants.dart';
 import 'view_models/auth_view_model/auth_controller_provider.dart';
 import 'firebase_options.dart';
 
-//when i was signed in already it read as if the user was null which is kind of weird needs checking
-//I dont understand proxy provider or either it doesnt work as advertised the user is null
-//when its opened from cache in the notesviewmodel
-//as well as i havent figured a neat way to initialize a listenable provider i might initialize on each needed part which is the right thing
-//but the consumer was a solution which solved everything and it doesnt work there so that is my thought of mimicking that functionality
-
-//TODO
-//implement decent provider listeners and readers on widgets either each widget would be a child of a consumer probably
-//fix the proxy provider bugs and the non synchronous userId values
-//if it fixes the behaviour on launch on cached user then ok if not figure out a solution for that
-//try to figure out the disposing of the database after logging out and opening on signing in
-//which should be in the update method of proxy provider but it doesnt work so its soon to be figured out
-
 //and a decent implementation might be left as is or
 // wrapping the basePage with a provider using the consumer of auth
 //on second thoughts this is a good implementation will be tested tmrw
@@ -54,8 +41,10 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(ChangeNotifierProvider(
-      create: (_) => AuthController(), child: const MyApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => AuthController()),
+    ChangeNotifierProvider(create: (_) => NotesViewModel())
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -66,29 +55,97 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
-
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<AuthController>().loginState;
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Constants.yellow),
-            useMaterial3: true,
-            fontFamily: 'Lufga'),
-        //rebuilding the app if the user logs in or logs logs out
-        home: Consumer<AuthController>(builder: (context, auth, child) {
-          return auth.loginState != LoginState.loggedIn
-              //reason its wrapped on the landing page and not multiple providers
-              // is because the controllers will be of no use If we're logged in from cache
-              //plus using the change notifier on some random part should work and would be used at some point
-              //so looking up it's errors would be useful now
+      title: 'Flutter Demo',
+      theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Constants.yellow),
+          useMaterial3: true,
+          fontFamily: 'Lufga'),
+      //rebuilding the app if the user logs in or logs logs out
+      home: state != LoginState.loggedIn
+          //reason its wrapped on the landing page and not multiple providers
+          // is because the controllers will be of no use If we're logged in from cache
+          //plus using the change notifier on some random part should work and would be used at some point
+          //so looking up it's errors would be useful now
 
-              ? const LandingPage()
-              : ChangeNotifierProvider(
-                  create: (_) => NotesViewModel(),
-                  child: BasePage(),
-                );
-        }));
+          ? const LandingPage()
+          : const BasePage(),
+    );
   }
 }
+
+//dead code
+//class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+
+//final NotesViewModel notesViewModel = NotesViewModel();
+//  //single instance of the Noterepo so initializing here would give an initialized instance to all
+//  //providers
+//  final _noteRepo = NoteRepo();
+//  @override
+//  void initState() {
+//    super.initState();
+//    WidgetsBinding.instance.addObserver(this);
+//    Future.microtask(() => _noteRepo.init());
+//  }
+////
+//  @override
+//  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+//    print('this is the app state: $state');
+//    switch (state) {
+//      case AppLifecycleState.resumed:
+//        await _noteRepo.init();
+//        break;
+//      case AppLifecycleState.paused:
+//        await _noteRepo.dispose();
+//        break;
+//      default:
+//        break;
+//    }
+//  }
+////
+//  @override
+//  Future<bool> didPopRoute() async {
+//    await _noteRepo.dispose();
+//    return super.didPopRoute();
+//  }
+////
+//  @override
+//  void dispose() {
+//    Future.microtask(() => _noteRepo.dispose());
+//    WidgetsBinding.instance.removeObserver(this);
+//    super.dispose();
+//  }
+//
+//  @override
+//  //reason database isnt closed in the basePage or in the disposal of the providers
+//  //is 1- its used in all
+//  //2-when pushing new routes it goes out of the tree and disposes the widgets so hence the provider so it closes the database prematurely
+//  //3-the desired behaviour isnt achieved except in this way
+//  Widget build(BuildContext context) {
+//    final state = context.watch<AuthController>().loginState;
+//    return MaterialApp(
+//      title: 'Flutter Demo',
+//      theme: ThemeData(
+//          colorScheme: ColorScheme.fromSeed(seedColor: Constants.yellow),
+//          useMaterial3: true,
+//          fontFamily: 'Lufga'),
+//      //rebuilding the app if the user logs in or logs logs out
+//      home: state != LoginState.loggedIn
+//      //reason its wrapped on the landing page and not multiple providers
+//      // is because the controllers will be of no use If we're logged in from cache
+//      //plus using the change notifier on some random part should work and would be used at some point
+//      //so looking up it's errors would be useful now
+//
+//          ? const LandingPage()
+//          //even with changeNotifierProvider.value and using 1 instance it for some reason
+//initializes two instances when changing to this page after logging in
+
+//          : ChangeNotifierProvider.value(
+//          value: notesViewModel, child: const BasePage()),
+//    );
+//  }
+//}
+//
