@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:notes_app/models/notes_data.dart';
 
 import '../models/notes.dart';
+import 'package:notes_app/constants/style_constants.dart';
 
 class TestingNote extends StatefulWidget {
   const TestingNote({super.key});
@@ -14,7 +17,7 @@ class _TestingNoteState extends State<TestingNote> {
   late final TextEditingController titleController;
   late final TextEditingController bodyController;
   late final TextEditingController descriptionController;
-
+  final random = Random();
   @override
   void initState() {
     titleController = TextEditingController();
@@ -59,6 +62,7 @@ class _TestingNoteState extends State<TestingNote> {
                           body: bodyController.text,
                           title: titleController.text,
                           description: descriptionController.text,
+                          color: Constants.listOfColors[random.nextInt(5)],
                         ),
                         createdAt: DateTime.now()));
               },

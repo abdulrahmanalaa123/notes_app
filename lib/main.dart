@@ -60,6 +60,7 @@ class _MyAppState extends State<MyApp> {
     final state = context.watch<AuthController>().loginState;
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Constants.yellow),
           useMaterial3: true,

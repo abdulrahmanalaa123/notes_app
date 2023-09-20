@@ -1,15 +1,10 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceHelper {
-  static final _storageInstance = SharedPreferenceHelper._();
   late final Future<SharedPreferences> _mySp;
 
-  SharedPreferenceHelper._() {
+  SharedPreferenceHelper() {
     _mySp = SharedPreferences.getInstance();
-  }
-
-  factory SharedPreferenceHelper() {
-    return _storageInstance;
   }
 
   Future<dynamic> get(String name, Type type) async {

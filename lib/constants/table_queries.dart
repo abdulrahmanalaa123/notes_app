@@ -38,6 +38,7 @@ class TableQueries {
           title TEXT NOT NULL,
           body TEXT,
           description TEXT,
+          color INTEGER,
           is_favorite INTEGER DEFAULT 0,
           last_edited TEXT,
           user_id TEXT NOT NULL,

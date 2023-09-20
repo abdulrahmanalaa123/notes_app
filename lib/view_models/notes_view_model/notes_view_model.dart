@@ -52,15 +52,10 @@ class NotesViewModel extends ChangeNotifier {
   Future<void> dispose() async {
     _notesList.clear();
     _groupList.clear();
+    await _noteRepo!.dispose();
     notifyListeners();
     super.dispose();
   }
-
-  // void updateUser(String? newId) {
-  //   userId = newId;
-  //   _noteRepo?.changeUserId(newId);
-  //   notifyListeners();
-  // }
 
   Future<bool> addNote(Note note) async {
     if (!_open) {

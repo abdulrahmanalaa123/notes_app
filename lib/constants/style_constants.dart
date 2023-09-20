@@ -8,4 +8,5 @@ class Constants {
   static const beige = Color(0xFFF6ECC9);
   static const backGround = Colors.black;
   static const textColor = Colors.white;
+  static const listOfColors = [yellow, orange, blue, green, beige];
 }
