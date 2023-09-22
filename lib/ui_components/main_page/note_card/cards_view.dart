@@ -1,8 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
-import 'note_card/notes_grid_view.dart';
+import 'notes_grid_view.dart';
 
 class NoteView extends StatefulWidget {
   const NoteView({
@@ -17,10 +15,10 @@ class NoteView extends StatefulWidget {
 }
 
 class _NoteViewState extends State<NoteView> {
-  final Random rand = Random();
-
   @override
+  //TODO
+  //ListView Instead of grid
   Widget build(BuildContext context) {
-    return NotesGridView(rand: rand);
+    return const NotesGridView();
   }
 }

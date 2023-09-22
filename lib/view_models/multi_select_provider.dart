@@ -13,13 +13,7 @@ class MultiSelect extends ChangeNotifier {
   HashSet<Note> get checkSet => _checkHashSet;
 
   void changeMode() {
-    if (!_multiSelectOption) {
-      _multiSelectOption = true;
-      print('mode changed to true');
-    } else {
-      _multiSelectOption = false;
-      print('mode changed to false');
-    }
+    _multiSelectOption = !_multiSelectOption;
     notifyListeners();
   }
 

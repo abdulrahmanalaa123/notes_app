@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../models/notes.dart';
-import '../../../view_models/multi_select_provider.dart';
 import 'checkable_note_card_component.dart';
 
 import 'card_date_component.dart';
 
 class NotesCard extends StatelessWidget {
   const NotesCard(
-      {required this.note, this.first = false, required this.left, super.key});
+      {required this.note,
+      required this.borderRadius,
+      required this.margin,
+      required this.left,
+      required this.multiSelect,
+      super.key});
   final bool left;
-  final bool first;
+  final BorderRadius borderRadius;
+  final EdgeInsets margin;
   final Note note;
-
+  final bool multiSelect;
   @override
   Widget build(BuildContext context) {
-    final bool multiSelect = context
-        .select<MultiSelect, bool>((value) => value.isMultiSelectEnabled);
     return Column(
       children: [
         Expanded(
           child: CheckableNoteCardComponent(
-            left: left,
-            first: first,
+            borderRadius: borderRadius,
+            margin: margin,
             note: note,
             multiSelect: multiSelect,
           ),

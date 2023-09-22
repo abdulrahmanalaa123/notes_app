@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../view_models/multi_select_provider.dart';
-import 'elements_count_component.dart';
+import '../../../view_models/multi_select_provider.dart';
+import '../elements_count_component.dart';
 
 class MultiSelectAppBar extends StatelessWidget {
   const MultiSelectAppBar({

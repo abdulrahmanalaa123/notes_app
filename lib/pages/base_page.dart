@@ -1,19 +1,20 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:notes_app/models/notes.dart';
+import 'package:notes_app/models/notes_data.dart';
 import 'package:notes_app/ui_components/main_page/welcome_text.dart';
 import 'package:notes_app/view_models/multi_select_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:notes_app/view_models/notes_view_model/notes_view_model.dart';
 import '../constants/style_constants.dart';
-import '../models/notes.dart';
-import '../ui_components/main_page/cards_view.dart';
-import 'package:notes_app/ui_components/main_page/top_button.dart';
+import '../ui_components/main_page/main_page_action_widget.dart';
+import '../ui_components/main_page/multi_select_page/multi_select_app_bar.dart';
+import '../ui_components/main_page/note_card/cards_view.dart';
+import 'package:notes_app/ui_components/main_page/buttons/main_page_top_actions.dart';
 
 import '../ui_components/main_page/group_list.dart';
-import '../ui_components/main_page/multi_select_app_bar.dart';
 
 //TODO
 //decent dispose
@@ -33,8 +34,18 @@ class _BasePageState extends State<BasePage> {
   bool _initialized = false;
 
   customInit() {
+    //to ensure everything is built and not perform inconsistencies
+    //in the context
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       await Provider.of<NotesViewModel>(context, listen: false).init();
+      await Provider.of<NotesViewModel>(context, listen: false).addNote(Note(
+          createdAt: DateTime.now(),
+          noteData: NoteData(
+              title: 'test noteView',
+              body: 'wahtevere',
+              description:
+                  'this is a logn description to repressent my notes capabilitesnhhhhhhhhhhhhhhhhhhhhnhhhhhhhhhhhhhhhhhhhhhhhhhhhhh',
+              color: Constants.listOfColors[Random().nextInt(5)])));
     });
     setState(() {
       _initialized = true;
@@ -68,14 +79,32 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
+//TODO
+//add remove group button on non multiselectPage
+//list of notes is read from the viewmodel
+//add delete functionality
+//add selectAll
+//add removeFromGroup button
+//add triple dots bar
+//finally the editing page i think
 class _MainPageState extends State<MainPage> {
   final Random rand = Random();
 
   @override
   Widget build(BuildContext context) {
-    final bool multiSelect = context.watch<MultiSelect>().isMultiSelectEnabled;
+    //using select is to select the specific multiSelect bool
+    //idk if i should use watch but i feel that i use watch when whenever the
+    //viewmodel is changed and i wont need anychange to rebuild the main widget
+    //and all is rebuilt inside using distinct values
+    //i feel that this is the better less expensive option
+    //if so why would you use watch in general?
+    //maybe if you need an instance and will be reused
+    final bool multiSelect =
+        context.select<MultiSelect, bool>((val) => val.isMultiSelectEnabled);
 
     return Scaffold(
+      //tofIx the keyboard in the addGroup dialog
+      resizeToAvoidBottomInset: false,
       backgroundColor: Constants.backGround,
       body: Stack(
         children: [
@@ -83,12 +112,9 @@ class _MainPageState extends State<MainPage> {
             const Column(
               children: [
                 Expanded(
-                    flex: 2,
+                    flex: 3,
                     child: Column(
-                      children: [
-                        MainPageTopButtons(),
-                        GroupTextIdentifier(group: 'All')
-                      ],
+                      children: [MainPageTopButtons(), GroupTextIdentifier()],
                     )),
                 Expanded(flex: 1, child: GroupsList()),
                 Expanded(
@@ -125,121 +151,7 @@ class _MainPageState extends State<MainPage> {
             //TODO
             //add button
             alignment: Alignment.bottomCenter,
-            child: GlassContainer(
-              blur: 5,
-              opacity: 0.3,
-              padding: const EdgeInsets.all(4),
-              margin: const EdgeInsets.only(bottom: 16),
-              child: !multiSelect
-                  ? const PlusButton()
-                  : const MultiSelectButtons(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class GlassContainer extends StatelessWidget {
-  const GlassContainer(
-      {required this.blur,
-      required this.opacity,
-      required this.child,
-      required this.padding,
-      required this.margin,
-      super.key});
-  final double blur;
-  final double opacity;
-  final Widget child;
-  final EdgeInsets padding;
-  final EdgeInsets margin;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: margin,
-      child: ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(50)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-          child: Container(
-            padding: padding,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(opacity),
-              borderRadius: const BorderRadius.all(Radius.circular(50)),
-              border: Border.all(
-                width: 1.5,
-                color: Colors.white.withOpacity(0.15),
-              ),
-            ),
-            child: child,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PlusButton extends StatelessWidget {
-  const PlusButton({this.buttonFunc, super.key});
-  final void Function()? buttonFunc;
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: buttonFunc ?? () {},
-      icon: const Icon(
-        CupertinoIcons.add,
-        color: Colors.white,
-        size: 30,
-      ),
-      style: IconButton.styleFrom(backgroundColor: Colors.black),
-    );
-  }
-}
-
-class MultiSelectButtons extends StatelessWidget {
-  const MultiSelectButtons({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      //not satisfied with this solution
-      constraints: const BoxConstraints(maxHeight: 85, maxWidth: 158),
-      padding: const EdgeInsets.only(bottom: 8, top: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Column(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  CupertinoIcons.delete,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                style: IconButton.styleFrom(backgroundColor: Colors.black),
-              ),
-              const Text('delete'),
-            ],
-          ),
-          const SizedBox(
-            width: 16,
-          ),
-          Column(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.select_all,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                style: IconButton.styleFrom(backgroundColor: Colors.black),
-              ),
-              const Text('Select All'),
-            ],
+            child: PageActions(multiSelect: multiSelect),
           ),
         ],
       ),

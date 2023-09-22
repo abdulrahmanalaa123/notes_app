@@ -1,33 +1,19 @@
 import 'package:flutter/material.dart';
-
-import '../../constants/style_constants.dart';
+import 'buttons/add_group_button.dart';
+import 'current_group_text.dart';
 
 class GroupTextIdentifier extends StatelessWidget {
-  const GroupTextIdentifier({required this.group, super.key});
-  final String group;
+  const GroupTextIdentifier({super.key});
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(
-            '$group Notes',
-            style: const TextStyle(
-              fontSize: 48,
-              color: Constants.textColor,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          //const Text(
-          //  'Notes',
-          //  style: TextStyle(
-          //    fontSize: 48,
-          //    color: Constants.textColor,
-          //    fontWeight: FontWeight.w400,
-          //  ),
-          //),
+          Expanded(flex: 2, child: GroupNameText()),
+          Expanded(child: AddGroupButton()),
         ],
       ),
     );

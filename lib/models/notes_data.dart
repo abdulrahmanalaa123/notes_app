@@ -74,6 +74,15 @@ class NoteData {
     groups?.remove(group);
   }
 
+  bool hasGroup({required Group group}) {
+    List<Group>? nullCheckableGroups = groups;
+    if (nullCheckableGroups != null) {
+      return nullCheckableGroups.contains(group);
+    } else {
+      return false;
+    }
+  }
+
   Map<String, dynamic> toRow() {
     //these are what we need in a database row altogether
     Map<String, dynamic> initialMap = {

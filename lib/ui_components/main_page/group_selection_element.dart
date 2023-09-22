@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../view_models/notes_view_model/notes_view_model.dart';
 import 'elements_count_component.dart';
 
 class GroupSelectionElement extends StatelessWidget {
@@ -17,7 +19,7 @@ class GroupSelectionElement extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: first
-          ? const EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 8)
+          ? const EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)
           : const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -38,7 +40,11 @@ class GroupSelectionElement extends StatelessWidget {
             ),
             selected ? const SizedBox(width: 12) : const SizedBox.shrink(),
             selected
-                ? ElementsCountComponent(count: count)
+                ? ElementsCountComponent(
+                    //the count is simply a read because any change to the list will affect
+                    //the listview.builder so in turn will rebuild this so at the moment of rebuilding
+                    //this will be right probably
+                    count: context.read<NotesViewModel>().selectedList.length)
                 : const SizedBox.shrink(),
           ]),
     );

@@ -8,14 +8,14 @@ import 'note_card_title_favorite.dart';
 class CheckableNoteCardComponent extends StatelessWidget {
   const CheckableNoteCardComponent({
     super.key,
-    required this.left,
-    required this.first,
+    required this.borderRadius,
+    required this.margin,
     required this.note,
     required this.multiSelect,
   });
 
-  final bool left;
-  final bool first;
+  final EdgeInsets margin;
+  final BorderRadius borderRadius;
   final Note note;
   final bool multiSelect;
 
@@ -26,19 +26,11 @@ class CheckableNoteCardComponent extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          constraints: const BoxConstraints(
-            minHeight: 200,
-          ),
-          margin: EdgeInsets.only(
-              left: left ? 16 : 0, right: !left ? 16 : 0, top: first ? 16 : 0),
+          margin: margin.copyWith(bottom: 0),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: note.noteData.color,
-            borderRadius: BorderRadius.only(
-                topLeft: left ? Radius.zero : const Radius.circular(30),
-                topRight: const Radius.circular(30),
-                bottomLeft: const Radius.circular(30),
-                bottomRight: left ? const Radius.circular(30) : Radius.zero),
+            borderRadius: borderRadius,
             shape: BoxShape.rectangle,
           ),
           child: Column(
@@ -56,6 +48,8 @@ class CheckableNoteCardComponent extends StatelessWidget {
             ],
           ),
         ),
+        //this works without sizing because its all in expanded
+        //in the parent widget
         multiSelect && isSelected
             ? DecoratedBox(
                 decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),

@@ -231,7 +231,7 @@ class SqlHelper {
       try {
         await db.delete(table!,
             where: id != null ? "id = ?" : 'user_id = ?',
-            whereArgs: id != null ? [id, userId] : [userId]);
+            whereArgs: id != null ? [id] : [userId]);
         return true;
       } catch (e) {
         // if it is a database exception i can return false instead of rethrowing idk yet

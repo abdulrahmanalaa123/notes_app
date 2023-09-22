@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app/view_models/auth_view_model/auth_controller_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'grid_view_button.dart';
 
 class MainPageTopButtons extends StatelessWidget {
   const MainPageTopButtons({
     super.key,
-    this.button1Func,
+    this.button2Func,
   });
-  final void Function()? button1Func;
+  final void Function()? button2Func;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -16,7 +19,9 @@ class MainPageTopButtons extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            onPressed: button1Func ?? () {},
+            onPressed: () async {
+              await context.read<AuthController>().SignOut();
+            },
             icon: const Icon(
               Icons.logout_outlined,
               color: Colors.white,
@@ -28,7 +33,7 @@ class MainPageTopButtons extends StatelessWidget {
             ),
           ),
           GridViewButton(
-            viewFunc: () {},
+            viewFunc: button2Func ?? () {},
           ),
         ],
       ),

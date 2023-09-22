@@ -43,6 +43,7 @@ class CardDateComponent extends StatelessWidget {
           child: Text(
             date,
             textAlign: TextAlign.left,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(color: Colors.white),
           ),
         ),

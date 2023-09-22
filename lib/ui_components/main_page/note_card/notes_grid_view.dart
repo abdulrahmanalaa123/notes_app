@@ -1,23 +1,23 @@
-import 'dart:math';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:notes_app/view_models/notes_view_model/notes_view_model.dart';
+import 'package:provider/provider.dart';
 
-import '../../../constants/style_constants.dart';
-import '../../../models/notes.dart';
-import '../../../models/notes_data.dart';
+import '../../../view_models/multi_select_provider.dart';
+import 'card_actions.dart';
 import 'note_card.dart';
 import 'note_card_inkwell.dart';
 
 class NotesGridView extends StatelessWidget {
   const NotesGridView({
     super.key,
-    required this.rand,
   });
-
-  final Random rand;
 
   @override
   Widget build(BuildContext context) {
+    final noteList = context.watch<NotesViewModel>().selectedList;
+    final bool multiSelect = context
+        .select<MultiSelect, bool>((value) => value.isMultiSelectEnabled);
     return GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
@@ -25,36 +25,42 @@ class NotesGridView extends StatelessWidget {
           mainAxisSpacing: 8,
           mainAxisExtent: 300,
         ),
-        itemCount: 7,
+        itemCount: noteList.length,
         itemBuilder: (context, index) {
-          int colorInd = rand.nextInt(5);
-
-          final note = Note(
-              noteData: NoteData(
-                  title:
-                      'hello this a test to test the notes title limit what todo',
-                  body:
-                      'blalalallalalalahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh\nhhhhgggggggggggggggggssssssssssssssssssssss',
-                  color: Constants.listOfColors[colorInd]),
-              createdAt: DateTime.now());
-          bool first = false;
-          bool last = false;
-          bool left = false;
-          //dont know anyother way to combine either without the ifs
-          if (index <= 1) first = true;
           //TODO
           //implement last when you have the notes
           //if ((index-itemCount <= 1 && itemCount%2 == 0) || (index-itemCount < 1 && itemCount%2 != 0)) last = true;
-          if (index % 2 == 0) left = true;
+          final note = noteList[index];
+          final left = index % 2 == 0;
+          final first = index <= 1;
 
+          final margin = EdgeInsets.only(
+              left: left ? 16 : 0,
+              right: !left ? 16 : 0,
+              top: first ? 16 : 0,
+              bottom:
+                  !context.read<MultiSelect>().isMultiSelectEnabled ? 26 : 0);
+          final borderRadius = BorderRadius.only(
+              topLeft: left ? Radius.zero : const Radius.circular(30),
+              topRight: const Radius.circular(30),
+              bottomLeft: const Radius.circular(30),
+              bottomRight: left ? const Radius.circular(30) : Radius.zero);
           return Stack(
             children: [
               NotesCard(
                 note: note,
+                //left or right
+                margin: margin,
+                borderRadius: borderRadius,
                 left: left,
-                first: first,
+                multiSelect: multiSelect,
               ),
-              NoteCardsInkWell(left: left, first: first, note: note),
+              NoteCardsInkWell(
+                  margin: margin, borderRadius: borderRadius, note: note),
+              !multiSelect
+                  ? CardActions(
+                      borderRadius: borderRadius, margin: margin, note: note)
+                  : const SizedBox.shrink(),
             ],
           );
         });

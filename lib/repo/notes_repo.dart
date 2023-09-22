@@ -6,14 +6,12 @@ import '../models/group.dart';
 import '../models/image_model.dart';
 import '../models/notes.dart';
 
-//the image list table is useless but its better in deletion
-//due to the cascade property
-//although its such a hassle and i would understand if it is seen as useless
-//but I've already just given into it
-//nvm on second thought its much worse
 //TODO
-//error handling in either this Repo
-//or in the viewModel or controller
+//better error handling and removing try and catches and just
+//using one at the view layer and proper error messages
+//except unique error messages
+//find them and see if there is a better implementation
+//I think none is needed
 class NoteRepo {
   static final NoteRepo _noteRepo = NoteRepo._();
   bool _open = false;
@@ -62,17 +60,17 @@ class NoteRepo {
         //should be replaced by a batch insertion in the sqlhelper but left as is for now
         //TODO
         //implement a batch insertion in sqlhelper
-        note.noteData.imgPaths!.map((e) async {
+        Future.wait(note.noteData.imgPaths!.map((e) async {
           await addImage(e, note.id!);
-        });
+        }));
       }
       if (note.noteData.groups != null) {
         //should be replaced by a batch insertion in the sqlhelper but left as is for now
         //TODO
         //implement a batch insertion in sqlhelper
-        note.noteData.groups!.map((e) async {
+        Future.wait(note.noteData.groups!.map((e) async {
           await addNoteToGroup(note, e);
-        });
+        }));
       }
     } catch (e) {
       print(e);
@@ -197,6 +195,26 @@ class NoteRepo {
     }
   }
 
+  Future<List<Group>> readAllGroups() async {
+    try {
+      //get the note
+      List<Map<String, dynamic>>? map = await _sqlHelper.read(
+          raw: false, table: TableNames.group, userId: userId);
+      //only null if not initialized
+      if (map == null || map.isEmpty) {
+        return [];
+      }
+
+      final listOfGroups = map.map((e) => Group.fromRow(e)).toList();
+      //select all images with the note_id = noteid
+
+      return listOfGroups;
+    } catch (e) {
+      print("Error is $e");
+      rethrow;
+    }
+  }
+
   Future<List<Note>> _notesFromRows(List<Map<String, dynamic>> map) async {
     final listOfNotes = map.map((e) => Note.fromRow(e));
     //select all images with the note_id = noteid
@@ -235,9 +253,11 @@ class NoteRepo {
   Future<bool> addGroup(Group group) async {
     int? id;
     try {
+      Map<String, dynamic> dataMap = group.toRow();
+      dataMap['user_id'] = userId;
       id = await _sqlHelper.create(
-          table: TableNames.group, data: group.toRow(), raw: false);
-      group.setId(id!);
+          table: TableNames.group, data: dataMap, raw: false);
+      if (id != null) group.setId(id);
     } catch (e) {
       print(e);
       return false;
@@ -289,10 +309,10 @@ class NoteRepo {
   //removeNoteFromGroup
   Future<bool> removeNoteFromGroup(Note note, Group group) async {
     try {
-      await _sqlHelper.update(
+      await _sqlHelper.delete(
           raw: true,
           query:
-              'UPDATE ${TableNames.notesJunc} SET group_id = NULL WHERE note_id = ? AND group_id = ?',
+              'DELETE FROM ${TableNames.notesJunc} WHERE note_id = ? AND group_id = ?',
           argumentsList: [note.id.toString(), group.id.toString()]);
       note.noteData.removeFromGroup(group: group);
       return true;
