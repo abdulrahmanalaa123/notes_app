@@ -19,7 +19,6 @@ class GroupsList extends StatelessWidget {
     // but i dont get the reason it doesnt rebuild
     //final groupList =
     //    context.select<NotesViewModel, List<Group>>((val) => val.groupList);
-    print('rebuilding');
     //TODO
     //groups List is a bit janky for some reason idk if its because of watch or select but it is
     //need to fix it or at least figure out why if its not hurtful then fuck it

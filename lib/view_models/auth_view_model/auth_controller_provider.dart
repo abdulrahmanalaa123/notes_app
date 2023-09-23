@@ -25,37 +25,46 @@ class AuthController extends ChangeNotifier {
   final NoteRepo _noteRepo;
   LoginState _loginState = LoginState.signedOut;
 
+  //TODO
+  //heavy work using a stream in the constructor of an app
+  //might just cancel the token stream since i dont need it at the moment
+  //or figure out a more clever way to do so
+  //this stream was my main performance issue
+  //it wont be needed for real if i close and reopen the application
+  //without needing to relogin
   AuthController()
       : _auth = FirebaseService(),
         _storageHelper = SharedPreferenceHelper(),
         _noteRepo = NoteRepo() {
     //comparator initialized to null
     //comparator is the past token
-    String? comparator;
+    //String? comparator;
+//
+    //_auth.tokenStream().listen((jwt) async {
+    //  String? jwtVal = await jwt;
+    //  //solving the hot restart bug in firebase
+    //  print('we are hjere stream subscriber');
+    //  print('the user is ${_currentUser?.id}');
+    //  if (jwtVal != null) {
+    //    if (jwtVal != comparator) {
+    //      //this means that the token is reset but it gives issues so its logged in as well
+    //      _loginState = LoginState.loggedIn;
+    //    } else {
+    //      _loginState = LoginState.loggedIn;
+    //    }
+    //    //this would happen if the user is null but the token is valid so dont change user
+    //    //sign out would register
+    //    //updating the repo gives some wierd interaction where it would take longer before it notifies users of the current
+    //    //still valid token
+    //  } else {
+    //    _loginState = LoginState.signedOut;
+    //  }
+    //  comparator = jwtVal;
+//
+    //  notifyListeners();
+    //});
 
-    _auth.tokenStream().listen((jwt) async {
-      String? jwtVal = await jwt;
-      //solving the hot restart bug in firebase
-      print('we are hjere stream subscriber');
-      print('the user is ${_currentUser?.id}');
-      if (jwtVal != null) {
-        if (jwtVal != comparator) {
-          //this means that the token is reset but it gives issues so its logged in as well
-          _loginState = LoginState.loggedIn;
-        } else {
-          _loginState = LoginState.loggedIn;
-        }
-        //this would happen if the user is null but the token is valid so dont change user
-        //sign out would register
-        //updating the repo gives some wierd interaction where it would take longer before it notifies users of the current
-        //still valid token
-      } else {
-        _loginState = LoginState.signedOut;
-      }
-      comparator = jwtVal;
-
-      notifyListeners();
-    });
+    Future.microtask(() => checkState());
   }
 
   LoginState get loginState => _loginState;
@@ -63,6 +72,19 @@ class AuthController extends ChangeNotifier {
 
   //Future voids are there to enable awaiting
 
+  //exported into a function to await its values and register
+  //simple half ass solution instead of the stream it works for now
+  ////but for timed out tokens, etc. its kind of cringe and wouldnt work but fuck it
+  Future<void> checkState() async {
+    final currentUser = await _storageHelper.get('currentUser', String);
+    print(currentUser);
+    if (currentUser == null) {
+      _loginState = LoginState.signedOut;
+    } else {
+      _loginState = LoginState.loggedIn;
+    }
+    notifyListeners();
+  }
   //Login Interface
 
   /// A [FirebaseAuthException] maybe thrown with the following error code:
@@ -80,6 +102,7 @@ class AuthController extends ChangeNotifier {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       _currentUser = _auth.user;
+      _loginState = LoginState.loggedIn;
       await _updateRepo(false);
       notifyListeners();
     } catch (e) {
@@ -91,6 +114,8 @@ class AuthController extends ChangeNotifier {
     try {
       await _auth.signInAnonymously();
       _currentUser = _auth.user;
+      _loginState = LoginState.loggedIn;
+
       await _updateRepo(false);
       notifyListeners();
     } catch (e) {
@@ -116,6 +141,8 @@ class AuthController extends ChangeNotifier {
       await _auth.createAccountWithEmailAndPassword(
           name: name, email: email, password: password);
       _currentUser = _auth.user;
+      _loginState = LoginState.loggedIn;
+
       await _updateRepo(false);
       notifyListeners();
     } catch (e) {
@@ -128,6 +155,8 @@ class AuthController extends ChangeNotifier {
   Future<void> SignOut() async {
     await _auth.signOut();
     _currentUser = _auth.user;
+    _loginState = LoginState.signedOut;
+
     await _updateRepo(true);
     notifyListeners();
   }

@@ -17,36 +17,39 @@ class MainModeActionButtons extends StatelessWidget {
     //in the widget even when its in All and its not needed for example
     Group? selectedGroup =
         context.select<NotesViewModel, Group?>((value) => value.selectedGroup);
-    return Row(
-      mainAxisAlignment: selectedGroup != null
-          ? MainAxisAlignment.spaceEvenly
-          : MainAxisAlignment.center,
-      children: [
-        IconButton(
-          onPressed: buttonFunc ?? () {},
-          icon: const Icon(
-            CupertinoIcons.add,
-            color: Colors.white,
-            size: 30,
+    return IntrinsicWidth(
+      stepWidth: 50,
+      child: Row(
+        mainAxisAlignment: selectedGroup != null
+            ? MainAxisAlignment.spaceEvenly
+            : MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: buttonFunc ?? () {},
+            icon: const Icon(
+              CupertinoIcons.add,
+              color: Colors.white,
+              size: 30,
+            ),
+            style: IconButton.styleFrom(backgroundColor: Colors.black),
           ),
-          style: IconButton.styleFrom(backgroundColor: Colors.black),
-        ),
-        selectedGroup != null
-            ? IconButton(
-                onPressed: () async {
-                  final viewModel = context.read<NotesViewModel>();
-                  await viewModel.removeGroup(selectedGroup);
-                  //return to All notes
-                  viewModel.switchIndex(-1);
-                },
-                icon: const Icon(
-                  Icons.delete_forever,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                style: IconButton.styleFrom(backgroundColor: Colors.black))
-            : const SizedBox.shrink(),
-      ],
+          selectedGroup != null
+              ? IconButton(
+                  onPressed: () async {
+                    final viewModel = context.read<NotesViewModel>();
+                    await viewModel.removeGroup(selectedGroup);
+                    //return to All notes
+                    viewModel.switchIndex(-1);
+                  },
+                  icon: const Icon(
+                    Icons.delete_forever,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  style: IconButton.styleFrom(backgroundColor: Colors.black))
+              : const SizedBox.shrink(),
+        ],
+      ),
     );
   }
 }

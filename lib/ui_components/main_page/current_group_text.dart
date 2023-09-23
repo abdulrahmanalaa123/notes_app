@@ -19,22 +19,26 @@ class GroupNameText extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          group != null ? group.groupName : 'All',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 48,
-            color: Constants.textColor,
-            fontWeight: FontWeight.w400,
+        Expanded(
+          child: Text(
+            group != null ? group.groupName : 'All',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 48,
+              color: Constants.textColor,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
-        const Text(
-          'Notes',
-          style: TextStyle(
-            fontSize: 48,
-            color: Constants.textColor,
-            fontWeight: FontWeight.w400,
+        const Expanded(
+          child: Text(
+            'Notes',
+            style: TextStyle(
+              fontSize: 48,
+              color: Constants.textColor,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
       ],

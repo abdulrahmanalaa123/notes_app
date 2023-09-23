@@ -19,13 +19,14 @@ class GroupSelectionElement extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: first
-          ? const EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)
-          : const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          ? const EdgeInsets.only(left: 16, right: 4, top: 16, bottom: 16)
+          : const EdgeInsets.symmetric(horizontal: 4, vertical: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40),
           border: Border.all(
-              color: selected ? Colors.white : Colors.white30, width: 2)),
+              color: selected ? Colors.white : Colors.white30,
+              width: selected ? 2 : 1.5)),
       child: Row(
           mainAxisAlignment: !selected
               ? MainAxisAlignment.center

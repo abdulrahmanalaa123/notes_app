@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:notes_app/models/notes.dart';
 import 'package:notes_app/models/notes_data.dart';
@@ -57,9 +56,7 @@ class _BasePageState extends State<BasePage> {
     super.didChangeDependencies();
 
     final modalRoute = ModalRoute.of(context)?.isActive;
-    print('modalRoute ffs:$modalRoute');
     if (modalRoute != null && modalRoute && !_initialized) {
-      print('initing first time ever');
       customInit();
     }
   }
@@ -114,7 +111,10 @@ class _MainPageState extends State<MainPage> {
                 Expanded(
                     flex: 3,
                     child: Column(
-                      children: [MainPageTopButtons(), GroupTextIdentifier()],
+                      children: [
+                        Expanded(child: MainPageTopButtons()),
+                        Expanded(child: GroupTextIdentifier())
+                      ],
                     )),
                 Expanded(flex: 1, child: GroupsList()),
                 Expanded(
