@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/notes.dart';
+import '../../../pages/edit_note_page.dart';
 import '../../../view_models/multi_select_provider.dart';
 
 class NoteCardsInkWell extends StatelessWidget {
@@ -29,8 +30,10 @@ class NoteCardsInkWell extends StatelessWidget {
               if (context.read<MultiSelect>().isMultiSelectEnabled) {
                 context.read<MultiSelect>().checkUncheck(note);
               } else {
-                //TODO
-                //gotoediting Page
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => EditNote(
+                          note: note,
+                        )));
               }
             },
             onLongPress: () {

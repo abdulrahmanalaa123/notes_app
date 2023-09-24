@@ -19,7 +19,7 @@ class PageActions extends StatelessWidget {
     //we have a select statement inside
     return GlassContainer(
       blur: 15,
-      opacity: 0.2,
+      opacity: 0.1,
       padding: const EdgeInsets.all(4),
       margin: const EdgeInsets.symmetric(
         vertical: 16,

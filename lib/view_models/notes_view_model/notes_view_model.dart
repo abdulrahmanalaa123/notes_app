@@ -5,8 +5,8 @@ import '../../models/group.dart';
 import '../../models/notes.dart';
 
 //TODO
-//if the initializer in the constructor works then leave it cuz it kind of makes sense
-//and i removed the dispose method  from the view model needs to be reassigned and invoked properly
+//move the tries and catch from the helper to the view model or the UI
+//and just changing the return of confirmation functions and just changing it to void
 class NotesViewModel extends ChangeNotifier {
   List<Note> _notesList = <Note>[];
   List<Group> groupList = <Group>[
@@ -73,7 +73,8 @@ class NotesViewModel extends ChangeNotifier {
   }
 
   void sortByDate() {
-    _notesList.sort((Note a, Note b) => a.compareTo(b));
+    //this reverse sort because a to b resulted in an inverted list
+    _notesList.sort((Note a, Note b) => b.compareTo(a));
     notifyListeners();
   }
 
@@ -240,6 +241,8 @@ class NotesViewModel extends ChangeNotifier {
         favorite: favorite);
 
     bool state = await _noteRepo!.updateNote(note);
+    //resort after editing any note
+    sortByDate();
     notifyListeners();
     return state;
   }

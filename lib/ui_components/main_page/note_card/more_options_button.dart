@@ -4,6 +4,7 @@ import 'package:notes_app/view_models/notes_view_model/notes_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/notes.dart';
+import '../../../pages/edit_note_page.dart';
 
 class OptionsButton extends StatelessWidget {
   OptionsButton({required this.note, required this.left, super.key});
@@ -33,7 +34,12 @@ class OptionsButton extends StatelessWidget {
       ),
       menuChildren: [
         MenuItemButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditNote(
+                      note: note,
+                    )));
+          },
           child: Text(Options.options[0]),
         ),
         MenuItemButton(

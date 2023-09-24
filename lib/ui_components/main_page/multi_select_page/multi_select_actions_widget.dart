@@ -26,51 +26,59 @@ class MultiSelectActions extends StatelessWidget {
         context.select<MultiSelect, int>((value) => value.checkSet.length) ==
             filteredListOfNotes.length;
 
-    return IntrinsicWidth(
-      stepWidth: 50,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(
+          width: 16,
+        ),
+        MultiSelectActionButton(
+          icon: CupertinoIcons.delete,
+          asyncFunc: () async {
+            final List<Note> selectedList =
+                context.read<MultiSelect>().checkSet.toList();
+            await context.read<NotesViewModel>().removeListOfNote(selectedList);
+            if (context.mounted) {
+              context.read<MultiSelect>().clear();
+            }
+          },
+          text: 'delete',
+        ),
+        const SizedBox(
+          width: 16,
+        ),
+        if (selectedGroup != null)
           MultiSelectActionButton(
-            icon: CupertinoIcons.delete,
-            asyncFunc: () async {
+            icon: CupertinoIcons.minus,
+            text: 'Remove',
+            func: () async {
               final List<Note> selectedList =
                   context.read<MultiSelect>().checkSet.toList();
-              await context
-                  .read<NotesViewModel>()
-                  .removeListOfNote(selectedList);
-              if (context.mounted) {
-                context.read<MultiSelect>().clear();
-              }
-            },
-            text: 'delete',
-          ),
-          if (selectedGroup != null)
-            MultiSelectActionButton(
-              icon: CupertinoIcons.minus,
-              text: 'Remove From Group',
-              func: () async {
-                final List<Note> selectedList =
-                    context.read<MultiSelect>().checkSet.toList();
-                print('selected Group: $selectedGroup');
-                await context.read<NotesViewModel>().removeNotesFromGroup(
-                    notes: selectedList, group: selectedGroup);
-              },
-            ),
-          MultiSelectActionButton(
-            icon: Icons.select_all_rounded,
-            text: allSelected ? 'Deselect All' : 'Select All',
-            color: allSelected ? Constants.yellow : null,
-            func: () {
-              if (!allSelected) {
-                context.read<MultiSelect>().checkAll(filteredListOfNotes);
-              } else {
-                context.read<MultiSelect>().unCheckAll(filteredListOfNotes);
-              }
+              print('selected Group: $selectedGroup');
+              await context.read<NotesViewModel>().removeNotesFromGroup(
+                  notes: selectedList, group: selectedGroup);
             },
           ),
-        ],
-      ),
+        const SizedBox(
+          width: 16,
+        ),
+        MultiSelectActionButton(
+          icon: Icons.select_all_rounded,
+          text: allSelected ? 'Deselect All' : 'Select All',
+          color: allSelected ? Constants.yellow : null,
+          func: () {
+            if (!allSelected) {
+              context.read<MultiSelect>().checkAll(filteredListOfNotes);
+            } else {
+              context.read<MultiSelect>().unCheckAll(filteredListOfNotes);
+            }
+          },
+        ),
+        const SizedBox(
+          width: 16,
+        ),
+      ],
     );
   }
 }

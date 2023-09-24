@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../constants/style_constants.dart';
+
 class MultiSelectActionButton extends StatelessWidget {
   const MultiSelectActionButton({
     super.key,
@@ -32,9 +34,14 @@ class MultiSelectActionButton extends StatelessWidget {
             ),
             style: IconButton.styleFrom(backgroundColor: Colors.black),
           ),
-          Text(
-            text,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          Flexible(
+            child: Text(
+              text,
+              style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: Constants.yellow),
+            ),
           ),
         ],
       ),

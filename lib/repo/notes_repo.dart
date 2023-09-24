@@ -28,6 +28,7 @@ class NoteRepo {
     _storageHelper = SharedPreferenceHelper();
     userId = await _storageHelper!.get('currentUser', String);
     _open = await _sqlHelper.open();
+    print('Database is open: $_open');
     return _open;
   }
 
@@ -190,7 +191,7 @@ class NoteRepo {
           raw: false,
           table: TableNames.notes,
           userId: userId,
-          orderBy: 'last_edited');
+          orderBy: 'last_edited DESC');
       //only null if not initialized
       if (map == null || map.isEmpty) {
         return [];

@@ -20,6 +20,9 @@ class NotesGridView extends StatelessWidget {
     //and not the selector where select works best for singular values and watch is better for global editing
     //states like adding group or editing note or adding it etc.
     //and watching the list in itself wont give any feedback on changes happened to the children of the list
+
+    //nvm select depends on objects pointers it points to an immutable object and if it cahnges pointer value
+    //then it would rebuild so watch is better in lists so any change to the notes themselves would change the list
     final noteList = context.watch<NotesViewModel>().selectedList;
     final bool multiSelect = context
         .select<MultiSelect, bool>((value) => value.isMultiSelectEnabled);

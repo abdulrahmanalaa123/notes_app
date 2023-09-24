@@ -19,9 +19,15 @@ class GroupsList extends StatelessWidget {
 
     //i presume the problem is in that select selects the list and any edit to the note or groups
     //and adding them to the list they are edited because the notify listeners in each of its functions
-    //and not the selector where select works best for singular values and watch is better for global editing
+    //and not the selection where select works best for singular values and watch is better for global editing
     //states like adding group or editing note or adding it etc.
     //and watching the list in itself wont give any feedback on changes happened to the children of the list
+    //could use SELECtor but its not worth the fuss
+    //Selector<NotesViewModel, List<Group>>(
+    //           selector: (_, service) => service.groupList,
+    //           builder: (context, selNames, child) {...},
+    //           shouldRebuild: (previous, next) => true,
+    //        )
     final groupList = context.watch<NotesViewModel>().groupList;
     final Group? selectedGroup =
         context.select<NotesViewModel, Group?>((value) => value.selectedGroup);

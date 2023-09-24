@@ -9,4 +9,5 @@ class Constants {
   static const backGround = Colors.black;
   static const textColor = Colors.white;
   static const listOfColors = [yellow, orange, blue, green, beige];
+  static const colorNames = ['yellow', 'orange', 'violet', 'green', 'beige'];
 }
