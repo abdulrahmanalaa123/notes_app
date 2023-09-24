@@ -20,7 +20,7 @@ class MainPageTopButtons extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () async {
-              await context.read<AuthController>().SignOut();
+              await context.read<AuthController>().signOut();
             },
             icon: const Icon(
               Icons.logout_outlined,

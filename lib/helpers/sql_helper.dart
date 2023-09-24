@@ -23,21 +23,16 @@ class SqlHelper {
     //not putting _db = null check since already been checked above
     await _helper.initPath();
     bool alreadyExists = await databaseExists(_helper.finalPath);
-    print('this database exists: $alreadyExists');
     if (alreadyExists) {
       _db = await openDatabase(_helper.finalPath);
-      print(_db);
-      print('Database Opened');
       return true;
     }
 
     //then finally if not all of those open a database
     try {
       _db = await _helper.create();
-      print(_db);
       return true;
     } catch (e) {
-      print('Error = $e');
       return false;
     }
   }
@@ -137,7 +132,8 @@ class SqlHelper {
       try {
         maps = await db.query(table!,
             where: id != null ? "id = ? " : 'user_id = ?',
-            whereArgs: id != null ? [id, userId] : [userId]);
+            whereArgs: id != null ? [id, userId] : [userId],
+            orderBy: orderBy);
         if (maps.isNotEmpty) {
           return maps;
         } else {
@@ -229,9 +225,10 @@ class SqlHelper {
       //if not just use rawQuery well i dont know how to generalize this class this is the best i can do
       //really my mind is just giving up on this so this is the best ive reached so far
       try {
-        await db.delete(table!,
+        int ho = await db.delete(table!,
             where: id != null ? "id = ?" : 'user_id = ?',
             whereArgs: id != null ? [id] : [userId]);
+        print('deleted counts are: $ho');
         return true;
       } catch (e) {
         // if it is a database exception i can return false instead of rethrowing idk yet

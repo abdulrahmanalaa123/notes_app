@@ -18,7 +18,11 @@ class Note implements Comparable {
     required this.createdAt,
     required this.noteData,
   }) {
-    noteData.creationTime(createdAt: createdAt);
+    //this will be created if read note
+    //has been created only and never edited
+    if (noteData.lastEdited == null) {
+      noteData.creationTime(createdAt: createdAt);
+    }
   }
 
   void setId(int newId) {
@@ -35,7 +39,7 @@ class Note implements Comparable {
   //compare to another note if not just compare it to ''
   //i guess this works idk yet
   int compareByText(covariant Note other) =>
-      noteData.body!.compareTo(other.noteData.body ?? '');
+      noteData.body.compareTo(other.noteData.body);
   int compareByTitle(covariant Note other) =>
       noteData.title.compareTo(other.noteData.title);
   @override

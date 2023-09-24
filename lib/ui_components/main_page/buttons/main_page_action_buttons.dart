@@ -33,21 +33,20 @@ class MainModeActionButtons extends StatelessWidget {
             ),
             style: IconButton.styleFrom(backgroundColor: Colors.black),
           ),
-          selectedGroup != null
-              ? IconButton(
-                  onPressed: () async {
-                    final viewModel = context.read<NotesViewModel>();
-                    await viewModel.removeGroup(selectedGroup);
-                    //return to All notes
-                    viewModel.switchIndex(-1);
-                  },
-                  icon: const Icon(
-                    Icons.delete_forever,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                  style: IconButton.styleFrom(backgroundColor: Colors.black))
-              : const SizedBox.shrink(),
+          if (selectedGroup != null && selectedGroup.groupName != 'Favourite')
+            IconButton(
+                onPressed: () async {
+                  final viewModel = context.read<NotesViewModel>();
+                  await viewModel.removeGroup(selectedGroup);
+                  //return to All notes
+                  viewModel.switchIndex(-1);
+                },
+                icon: const Icon(
+                  Icons.delete_forever,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                style: IconButton.styleFrom(backgroundColor: Colors.black)),
         ],
       ),
     );

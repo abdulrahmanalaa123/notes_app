@@ -16,13 +16,12 @@ class GroupsList extends StatelessWidget {
     //it rebuilds the whole widget
     //mbe has sth to do with stateless and stateful widgets
     //probably was because i call after popping so its already built
-    // but i dont get the reason it doesnt rebuild
-    //final groupList =
-    //    context.select<NotesViewModel, List<Group>>((val) => val.groupList);
-    //TODO
-    //groups List is a bit janky for some reason idk if its because of watch or select but it is
-    //need to fix it or at least figure out why if its not hurtful then fuck it
-    //IVe tried enough maybe not well enough but enough time might check it later
+
+    //i presume the problem is in that select selects the list and any edit to the note or groups
+    //and adding them to the list they are edited because the notify listeners in each of its functions
+    //and not the selector where select works best for singular values and watch is better for global editing
+    //states like adding group or editing note or adding it etc.
+    //and watching the list in itself wont give any feedback on changes happened to the children of the list
     final groupList = context.watch<NotesViewModel>().groupList;
     final Group? selectedGroup =
         context.select<NotesViewModel, Group?>((value) => value.selectedGroup);

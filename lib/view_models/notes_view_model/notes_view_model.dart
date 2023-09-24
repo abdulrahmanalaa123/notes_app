@@ -4,21 +4,14 @@ import 'package:notes_app/repo/notes_repo.dart';
 import '../../models/group.dart';
 import '../../models/notes.dart';
 
-//this is dogshit the design of passing the provider
-//as well as the restarting making the userID = to null
-//as well as the list not showing any progress
-//init doesnt work on opening after relogging in for some reason
-//I dont know what is the problem
 //TODO
 //if the initializer in the constructor works then leave it cuz it kind of makes sense
-//if not then figure out a way to initialize on logging in and disposing on logging out
-//add the rest of the functionality to the viewModel
-//the user_id is null when logging in from cache is an issue
 //and i removed the dispose method  from the view model needs to be reassigned and invoked properly
 class NotesViewModel extends ChangeNotifier {
   List<Note> _notesList = <Note>[];
-  List<Group> groupList = <Group>[];
-  List<Note> _selectedList = <Note>[];
+  List<Group> groupList = <Group>[
+    Group(groupName: 'Favourite'),
+  ];
   Group? _selectedGroup;
   final NoteRepo? _noteRepo;
   bool _open = false;
@@ -35,7 +28,12 @@ class NotesViewModel extends ChangeNotifier {
   get selectedGroup => _selectedGroup;
   get selectedList {
     if (_selectedGroup != null) {
-      return _selectedList;
+      //to return a filtered group the first design choice was to make another list
+      //that contains selected values but at editing it turned out to be a havoc where editing
+      //wouldnt show on the current list which was a copy and not a reference of the list
+      //so we should return a sublisted list of notes which contains a reference to the original list
+      //and is at the same time filtered which is a hundred folds a better design choice
+      return _filterByGroup(_selectedGroup!) ?? <Note>[];
     }
     {
       return _notesList;
@@ -46,21 +44,28 @@ class NotesViewModel extends ChangeNotifier {
   //dumb dynamic but it combines functionality instead of retyping the same code
   //or pass selection as a state or using it before getting context
   //which is much better this way
-  void _filterByGroup(Group group) {
+  List<Note>? _filterByGroup(Group group) {
     if (_notesList.isNotEmpty) {
-      _selectedList = _notesList.where((element) {
-        return element.noteData.hasGroup(group: group);
-      }).toList();
+      if (group.groupName == 'Favourite') {
+        return _notesList.where((element) {
+          return element.noteData.isFavorite == 1;
+        }).toList();
+      } else {
+        return _notesList.where((element) {
+          return element.noteData.hasGroup(group: group);
+        }).toList();
+      }
     }
+    notifyListeners();
+    return null;
   }
 
   void switchIndex(int newIndex) {
+    //after deleting a group the selected group is null
+    //which means it references the element and doesnt copy it
+    //which is insanely convenient!
     if (newIndex >= 0) {
-      //after deleting a group the selected group is null
-      //which means it references the element and doesnt copy it
-      //which is insanely convenient!
       _selectedGroup = groupList[newIndex];
-      _filterByGroup(groupList[newIndex]);
     } else {
       _selectedGroup = null;
     }
@@ -93,7 +98,6 @@ class NotesViewModel extends ChangeNotifier {
 
   Future<bool> addGroup({required String groupName}) async {
     if (!_open) {
-      print('were here');
       return false;
     }
     Group requiredGroup = Group(groupName: groupName);
@@ -114,15 +118,21 @@ class NotesViewModel extends ChangeNotifier {
     bool state = await _noteRepo!.deleteGroup(group);
     if (state) {
       groupList.remove(group);
-      _notesList.map((e) {
-        print('deleting group from note');
+      //although the where is inefficient
+      //it might benefit if the groups list in the notes are large
+      //so filtering the elements first would reduce the amount of times you need to restructure
+      //the note
+      //for (var e in _notesList.where((element) => element.noteData.hasGroup(group: group)))
+      //nvm fuck it its worse probably but it will be left for further inspection maybe some trial and error
+      for (var e in _notesList) {
         e.noteData.removeFromGroup(group: group);
-      });
-      //related to the my apps functionality where
+      }
+      //this line is related to the my apps functionality where
       //if you delete a group you must be selecting it
       //so it would refer you to the all notes
       //it would better be added to the UI instead since this wouldnt
       //be reusable completely in this current form
+
       //_selectedGroup = null;
     }
     print('removed group id is :${group.id}');
@@ -132,12 +142,12 @@ class NotesViewModel extends ChangeNotifier {
 
   Future<void> _addNoteToGroup(
       {required Note note, required Group group}) async {
-    if (!_open) {
-      print('were here');
-    } else {
+    if (_open) {
       //if i use it it will probably be ported from a hashset in multiselect
       //so i must reference that note in my original list to modify the elements app wise
-
+      //turns out i added a functionality where i do not add from a different list but fuck it its here to universalize
+      //the function no need to compose 2 functions just for an extra functionality
+      //fuck it
       int noteIndex = _notesList.indexOf(note);
       await _noteRepo!.addNoteToGroup(_notesList[noteIndex], group);
       notifyListeners();
@@ -146,9 +156,7 @@ class NotesViewModel extends ChangeNotifier {
 
   Future<void> _removeNoteFromGroup(
       {required Note note, required Group group}) async {
-    if (!_open) {
-      print('were here');
-    } else {
+    if (_open) {
       int noteIndex = _notesList.indexOf(note);
       //i get the index first to reference the note since it would be coming from
       //a hashset in the multiselect thats why i want to pass an object refernce not another object
@@ -160,12 +168,12 @@ class NotesViewModel extends ChangeNotifier {
   Future<bool> removeNotesFromGroup(
       {required Iterable<Note> notes, required Group group}) async {
     if (!_open) {
-      print('were here');
       return false;
     }
     Future.wait(notes.map((e) async {
       await _removeNoteFromGroup(group: group, note: e);
     }));
+
     notifyListeners();
     return true;
   }
@@ -173,7 +181,6 @@ class NotesViewModel extends ChangeNotifier {
   Future<bool> addNotesToGroup(
       {required Iterable<Note> notes, required Group group}) async {
     if (!_open) {
-      print('were here');
       return false;
     }
     Future.wait(notes.map((e) async {
@@ -189,7 +196,6 @@ class NotesViewModel extends ChangeNotifier {
   //error handling
   Future<bool> addNote(Note note) async {
     if (!_open) {
-      print('were here');
       return false;
     }
     bool state = await _noteRepo!.addNote(note);
@@ -218,7 +224,6 @@ class NotesViewModel extends ChangeNotifier {
     Color? newColor,
   }) async {
     if (!_open) {
-      print('were here');
       return false;
     }
     //supposedly this would be from the notepage and
@@ -296,8 +301,8 @@ class NotesViewModel extends ChangeNotifier {
     if (!_open) {
       return false;
     }
-    groupList = await _noteRepo!.readAllGroups();
-    if (_notesList.isNotEmpty) {
+    groupList.addAll(await _noteRepo!.readAllGroups());
+    if (groupList.isNotEmpty) {
       notifyListeners();
       return true;
     }

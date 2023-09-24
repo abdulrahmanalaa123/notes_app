@@ -15,7 +15,6 @@ class LoadingIndicator extends Indicators {
     if (isDisplayed) {
       return;
     }
-    print(isDisplayed);
 
     showDialog(
         context: context,

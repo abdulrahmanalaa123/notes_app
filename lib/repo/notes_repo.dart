@@ -40,8 +40,6 @@ class NoteRepo {
       //adding userId to the row before adding it to the database
       Map<String, dynamic> dataMap = note.toRow();
       dataMap['user_id'] = userId;
-      print(userId);
-      print(dataMap);
       id = await _sqlHelper.create(
           table: TableNames.notes, data: dataMap, raw: false);
       if (id != null && id != 0) {
@@ -61,7 +59,7 @@ class NoteRepo {
         //TODO
         //implement a batch insertion in sqlhelper
         Future.wait(note.noteData.imgPaths!.map((e) async {
-          await addImage(e, note.id!);
+          await addImage(e, note);
         }));
       }
       if (note.noteData.groups != null) {
@@ -83,27 +81,37 @@ class NoteRepo {
   //deletenote
   Future<bool> deleteNote(Note note) async {
     try {
-      return await _sqlHelper.delete(
+      bool state = false;
+      state = await _sqlHelper.delete(
           table: TableNames.notes, id: note.id, userId: userId, raw: false);
+      state = await _noteRemoveDatabaseReferences(note);
+      return state;
     } catch (e) {
       print(e);
       return false;
     }
+  }
 
-    //there is no need for this because i think cascade is set
-    //ill leave it commented in case it doesnt work
-    // try {
-    //   if (note.imgPaths != null && state) {
-    //     state = await _sqlHelper.delete(
-    //         query: 'DELETE FROM ${TableNames.images} WHERE note_id = ?',
-    //         argumentsList: [note.id.toString()],
-    //         raw: true);
-    //   }
-    // } catch (e) {
-    //   print(e);
-    //   return false;
-    // }
-    // return true;
+  Future<bool> _noteRemoveDatabaseReferences(Note note) async {
+    bool state = false;
+    state = await _noteInstanceDeleteGroups(note);
+    state = await _noteInstanceDeleteImages(note);
+    return state;
+  }
+
+  Future<bool> _noteInstanceDeleteImages(Note note) async {
+    return await _sqlHelper.delete(
+        raw: true,
+        query: 'DELETE from ${TableNames.images} WHERE note_id = ?',
+        argumentsList: [note.id.toString()]);
+  }
+
+  Future<bool> _noteInstanceDeleteGroups(Note note) async {
+    return await _sqlHelper.delete(
+        raw: true,
+        query:
+            'DELETE FROM ${TableNames.notesJunc} WHERE ${TableNames.notesJunc}.note_id = ? ',
+        argumentsList: [note.id.toString()]);
   }
 
   //updateNote
@@ -162,7 +170,7 @@ class NoteRepo {
         return null;
       }
 
-      //just to ensureDuplication
+      //same as _notesFromRows but
       Note note = Note.fromRow(map.first);
       //select all images with the note_id = noteid
       note = await _noteAddImagesToInstance(note);
@@ -226,6 +234,39 @@ class NoteRepo {
     return finalList;
   }
 
+  Future<Note> _noteAddImagesToInstance(Note note) async {
+    List<Map<String, dynamic>>? imgMap = await _sqlHelper.read(
+        raw: true,
+        query: 'SELECT * from ${TableNames.images} WHERE note_id = ?',
+        argumentsList: [note.id.toString()]);
+    if (imgMap == null || imgMap.isEmpty) {
+      return note;
+    } else {
+      final imgList = imgMap.map((e) {
+        return ImageModel.fromRow(e);
+      }).toList();
+      note.noteData.addImage(imgPath: imgList);
+    }
+    return note;
+  }
+
+  Future<Note> _noteAddGroupsToInstance(Note note) async {
+    List<Map<String, dynamic>>? groupMap = await _sqlHelper.read(
+        raw: true,
+        query:
+            'SELECT ${TableNames.group}.* FROM ${TableNames.group} INNER JOIN ${TableNames.notesJunc} ON ${TableNames.group}.id = ${TableNames.notesJunc}.group_id WHERE ${TableNames.notesJunc}.note_id = ? ',
+        argumentsList: [note.id.toString()]);
+    if (groupMap == null || groupMap.isEmpty) {
+      return note;
+    } else {
+      final groupList = groupMap.map((e) {
+        return Group.fromRow(e);
+      }).toList();
+      note.noteData.addToGroup(newGroups: groupList);
+    }
+    return note;
+  }
+
   //readGroup
   //this is probably a useless method i couldnt imagine a usecase
   //its here in case i need it
@@ -271,25 +312,19 @@ class NoteRepo {
     try {
       state = await _sqlHelper.delete(
           table: TableNames.group, id: group.id, userId: userId, raw: false);
+
+      if (state) {
+        state = await _sqlHelper.delete(
+            raw: true,
+            query: 'DELETE FROM ${TableNames.notesJunc} WHERE group_id = ?',
+            argumentsList: [group.id.toString()]);
+      }
+
       return state;
     } catch (e) {
       print(e);
       return false;
     }
-    //there is no need for this because i think cascade is set
-    //ill leave it commented in case it doesnt work
-    // try {
-    //   if (note.imgPaths != null && state) {
-    //     state = await _sqlHelper.delete(
-    //         query: 'DELETE FROM ${TableNames.images} WHERE note_id = ?',
-    //         argumentsList: [note.id.toString()],
-    //         raw: true);
-    //   }
-    // } catch (e) {
-    //   print(e);
-    //   return false;
-    // }
-    // return state;
   }
 
   //addNotetoGroup
@@ -314,6 +349,7 @@ class NoteRepo {
           query:
               'DELETE FROM ${TableNames.notesJunc} WHERE note_id = ? AND group_id = ?',
           argumentsList: [note.id.toString(), group.id.toString()]);
+
       note.noteData.removeFromGroup(group: group);
       return true;
     } catch (e) {
@@ -344,16 +380,17 @@ class NoteRepo {
   }
 
   //addImageToList
-  Future<bool> addImage(ImageModel image, int noteId) async {
+  Future<bool> addImage(ImageModel image, Note note) async {
     int? id;
     try {
       Map<String, dynamic> dataMap = image.toRow();
       dataMap['user_id'] = userId;
-      dataMap['note_id'] = noteId;
+      dataMap['note_id'] = note.id;
       id = await _sqlHelper.create(
           raw: false, table: TableNames.images, data: dataMap);
       if (id != 0 && id != null) {
         image.setId(id);
+        note.noteData.addImage(imgPath: [image]);
         return true;
       }
     } catch (e) {
@@ -372,38 +409,6 @@ class NoteRepo {
       print('Error is: $e');
       return false;
     }
-  }
-
-  Future<Note> _noteAddImagesToInstance(Note note) async {
-    List<Map<String, dynamic>>? imgMap = await _sqlHelper.read(
-        raw: true,
-        query: 'SELECT * from ${TableNames.images} WHERE note_id = ?',
-        argumentsList: [note.id.toString()]);
-    if (imgMap == null || imgMap.isEmpty) {
-      return note;
-    } else {
-      final imgList = imgMap.map((e) {
-        return ImageModel.fromRow(e);
-      }).toList();
-      note.noteData.addImage(imgPath: imgList);
-    }
-    return note;
-  }
-
-  Future<Note> _noteAddGroupsToInstance(Note note) async {
-    List<Map<String, dynamic>>? groupMap = await _sqlHelper.read(
-        raw: true,
-        query: 'SELECT * from ${TableNames.notesJunc} WHERE note_id = ?',
-        argumentsList: [note.id.toString()]);
-    if (groupMap == null || groupMap.isEmpty) {
-      return note;
-    } else {
-      final groupList = groupMap.map((e) {
-        return Group.fromRow(e);
-      }).toList();
-      note.noteData.addToGroup(newGroups: groupList);
-    }
-    return note;
   }
 
   Future<bool> dispose() async {

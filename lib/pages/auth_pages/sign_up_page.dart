@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/ui_components/authentication_components/loading_process_page.dart';
 import '../../helpers/form_validation.dart';
 import '../../helpers/text_control_helpers.dart';
-import '../../ui_components/authentication_components/customFormField.dart';
+import '../../ui_components/authentication_components/custom_form_field.dart';
 import '../../ui_components/authentication_components/auth_button.dart';
 import '../../ui_components/authentication_components/auth_app_bar.dart';
 

@@ -50,18 +50,17 @@ class CheckableNoteCardComponent extends StatelessWidget {
         ),
         //this works without sizing because its all in expanded
         //in the parent widget
-        multiSelect && isSelected
-            ? DecoratedBox(
-                decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
-                child: const Center(
-                  child: Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                ),
-              )
-            : const SizedBox.shrink(),
+        if (multiSelect && isSelected)
+          DecoratedBox(
+            decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
+            child: const Center(
+              child: Icon(
+                Icons.check,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+          ),
       ],
     );
   }

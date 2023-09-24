@@ -34,11 +34,10 @@ class CardDateComponent extends StatelessWidget {
 
     return Row(
       children: [
-        left
-            ? const SizedBox(
-                width: 16,
-              )
-            : const SizedBox.shrink(),
+        if (left)
+          const SizedBox(
+            width: 16,
+          ),
         Flexible(
           child: Text(
             date,

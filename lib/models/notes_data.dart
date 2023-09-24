@@ -24,6 +24,9 @@ class NoteData {
     this.groups,
     required this.color,
   }) {
+    imgPaths ??= <ImageModel>[];
+    groups ??= <Group>[];
+
     //if description is null either assign it '' if body is null and dont if it isnt
     //which will be given from the above constructor
     description ??= (body.length > 100)
@@ -56,22 +59,20 @@ class NoteData {
   }
 
   void addImage({required List<ImageModel> imgPath}) {
-    imgPaths ??= <ImageModel>[];
     //why does it need a null check since i already check for nulls firsthand?!
-    imgPaths?.addAll(imgPath);
+    imgPaths!.addAll(imgPath);
   }
 
   void deleteImage({required ImageModel imgPath}) {
-    imgPaths?.remove(imgPath);
+    imgPaths!.remove(imgPath);
   }
 
   void addToGroup({required List<Group> newGroups}) {
-    groups ??= <Group>[];
-    groups?.addAll(newGroups);
+    groups!.addAll(newGroups);
   }
 
   void removeFromGroup({required Group group}) {
-    groups?.remove(group);
+    groups!.remove(group);
   }
 
   bool hasGroup({required Group group}) {

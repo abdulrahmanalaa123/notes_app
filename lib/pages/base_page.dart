@@ -85,8 +85,6 @@ class MainPage extends StatefulWidget {
 //add triple dots bar
 //finally the editing page i think
 class _MainPageState extends State<MainPage> {
-  final Random rand = Random();
-
   @override
   Widget build(BuildContext context) {
     //using select is to select the specific multiSelect bool

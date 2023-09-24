@@ -45,19 +45,18 @@ class MultiSelectActions extends StatelessWidget {
             },
             text: 'delete',
           ),
-          selectedGroup != null
-              ? MultiSelectActionButton(
-                  icon: CupertinoIcons.minus,
-                  text: 'Remove From Group',
-                  func: () async {
-                    final List<Note> selectedList =
-                        context.read<MultiSelect>().checkSet.toList();
-                    print('selected Group: $selectedGroup');
-                    await context.read<NotesViewModel>().removeNotesFromGroup(
-                        notes: selectedList, group: selectedGroup);
-                  },
-                )
-              : const SizedBox.shrink(),
+          if (selectedGroup != null)
+            MultiSelectActionButton(
+              icon: CupertinoIcons.minus,
+              text: 'Remove From Group',
+              func: () async {
+                final List<Note> selectedList =
+                    context.read<MultiSelect>().checkSet.toList();
+                print('selected Group: $selectedGroup');
+                await context.read<NotesViewModel>().removeNotesFromGroup(
+                    notes: selectedList, group: selectedGroup);
+              },
+            ),
           MultiSelectActionButton(
             icon: Icons.select_all_rounded,
             text: allSelected ? 'Deselect All' : 'Select All',

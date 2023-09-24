@@ -8,11 +8,13 @@ class CardActions extends StatelessWidget {
   const CardActions(
       {required this.borderRadius,
       required this.margin,
+      required this.left,
       required this.note,
       super.key});
   final BorderRadius borderRadius;
   final EdgeInsets margin;
   final Note note;
+  final bool left;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -28,7 +30,7 @@ class CardActions extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  OptionsButton(note: note),
+                  OptionsButton(note: note, left: left),
                   HeartButton(note: note),
                 ],
               ),

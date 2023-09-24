@@ -15,6 +15,11 @@ class NotesGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //i presume the problem is in that select selects the list and any edit to the note or groups
+    //and adding them to the list they are edited because the notify listeners in each of its functions
+    //and not the selector where select works best for singular values and watch is better for global editing
+    //states like adding group or editing note or adding it etc.
+    //and watching the list in itself wont give any feedback on changes happened to the children of the list
     final noteList = context.watch<NotesViewModel>().selectedList;
     final bool multiSelect = context
         .select<MultiSelect, bool>((value) => value.isMultiSelectEnabled);
@@ -57,10 +62,13 @@ class NotesGridView extends StatelessWidget {
               ),
               NoteCardsInkWell(
                   margin: margin, borderRadius: borderRadius, note: note),
-              !multiSelect
-                  ? CardActions(
-                      borderRadius: borderRadius, margin: margin, note: note)
-                  : const SizedBox.shrink(),
+              if (!multiSelect)
+                CardActions(
+                  borderRadius: borderRadius,
+                  margin: margin,
+                  note: note,
+                  left: left,
+                ),
             ],
           );
         });

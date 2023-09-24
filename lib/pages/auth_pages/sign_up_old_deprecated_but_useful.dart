@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/helpers/form_validation.dart';
-import 'package:notes_app/ui_components/authentication_components/customFormField.dart';
+import 'package:notes_app/ui_components/authentication_components/custom_form_field.dart';
 import 'package:notes_app/ui_components/authentication_components/auth_button.dart';
 import 'package:notes_app/constants/style_constants.dart';
 import 'package:notes_app/ui_components/authentication_components/auth_app_bar.dart';

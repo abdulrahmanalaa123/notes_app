@@ -37,8 +37,10 @@ class LandingPage extends StatelessWidget {
               children: [
                 AuthButton(
                   authFunc: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SignIn()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignIn()));
                   },
                   text: 'Login',
                   shadow: false,
@@ -48,8 +50,10 @@ class LandingPage extends StatelessWidget {
                 ),
                 AuthButton(
                   authFunc: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SignUp()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignUp()));
                   },
                   text: 'Sign Up',
                   shadow: false,

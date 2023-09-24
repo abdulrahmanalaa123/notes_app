@@ -30,10 +30,8 @@ class NotesCard extends StatelessWidget {
             multiSelect: multiSelect,
           ),
         ),
-        !multiSelect ? const SizedBox(height: 8) : const SizedBox.shrink(),
-        !multiSelect
-            ? CardDateComponent(left: left, note: note)
-            : const SizedBox.shrink(),
+        if (!multiSelect) const SizedBox(height: 8),
+        if (!multiSelect) CardDateComponent(left: left, note: note),
       ],
     );
   }

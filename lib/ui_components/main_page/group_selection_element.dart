@@ -39,14 +39,13 @@ class GroupSelectionElement extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                   fontSize: 24),
             ),
-            selected ? const SizedBox(width: 12) : const SizedBox.shrink(),
-            selected
-                ? ElementsCountComponent(
-                    //the count is simply a read because any change to the list will affect
-                    //the listview.builder so in turn will rebuild this so at the moment of rebuilding
-                    //this will be right probably
-                    count: context.read<NotesViewModel>().selectedList.length)
-                : const SizedBox.shrink(),
+            if (selected) const SizedBox(width: 12),
+            if (selected)
+              ElementsCountComponent(
+                  //the count is simply a read because any change to the list will affect
+                  //the listview.builder so in turn will rebuild this so at the moment of rebuilding
+                  //this will be right probably
+                  count: context.read<NotesViewModel>().selectedList.length),
           ]),
     );
   }

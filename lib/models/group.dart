@@ -39,4 +39,16 @@ class Group {
     }
     return initialMap;
   }
+
+  //added to compare groups when adding groups
+  //means if the group has the same  id then theyre the same group
+  //if you read notes from the database and the groups created from the database
+  //werent considered the same as the ones read from the groups table
+  //maybe because the hashcode is random for each object created
+  //so when comparing using contains it didnt work
+  @override
+  bool operator ==(covariant Group other) => id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

@@ -1,1 +1,1 @@
-enum DropDown { EditNote, DeleteNote, AddToGroup }
+enum DropDown { editNote, deleteNote, addToGroup }

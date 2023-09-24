@@ -40,7 +40,7 @@ abstract class SignInHelper<T extends StatefulWidget> extends State<T> {
   Future<void> signIn(BuildContext context) async {
     try {
       await Provider.of<AuthController>(context, listen: false)
-          .SignInWithEmailAndPassword(
+          .signInWithEmailAndPassword(
               emailController.text, passwordController.text);
     } catch (e) {
       rethrow;
@@ -75,7 +75,7 @@ abstract class SignUpHelper<T extends StatefulWidget> extends State<T> {
   Future<void> signUp(BuildContext context) async {
     try {
       await Provider.of<AuthController>(context, listen: false)
-          .RegisterWithEmailAndPassword(nameController.text,
+          .registerWithEmailAndPassword(nameController.text,
               emailController.text, passwordController.text);
     } catch (e) {
       rethrow;

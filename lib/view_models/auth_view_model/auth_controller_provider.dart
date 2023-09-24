@@ -77,7 +77,7 @@ class AuthController extends ChangeNotifier {
   ////but for timed out tokens, etc. its kind of cringe and wouldnt work but fuck it
   Future<void> checkState() async {
     final currentUser = await _storageHelper.get('currentUser', String);
-    print(currentUser);
+    print('current user is:$currentUser');
     if (currentUser == null) {
       _loginState = LoginState.signedOut;
     } else {
@@ -98,7 +98,7 @@ class AuthController extends ChangeNotifier {
   ///  - Thrown if the password is invalid for the given email, or the account
   ///    corresponding to the email does not have a password set.
   ///    errors to deal with in a snackbar or a popup probably maybe in a textfield as well
-  Future<void> SignInWithEmailAndPassword(String email, String password) async {
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       _currentUser = _auth.user;
@@ -110,7 +110,7 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  Future<void> SignInAnonymous() async {
+  Future<void> signInAnonymously() async {
     try {
       await _auth.signInAnonymously();
       _currentUser = _auth.user;
@@ -135,7 +135,7 @@ class AuthController extends ChangeNotifier {
   ///  errors should be handled with the textfields and not a snackbar
 
   //sign up interface
-  Future<void> RegisterWithEmailAndPassword(
+  Future<void> registerWithEmailAndPassword(
       String name, String email, String password) async {
     try {
       await _auth.createAccountWithEmailAndPassword(
@@ -152,7 +152,7 @@ class AuthController extends ChangeNotifier {
 
   //it changes the current stream subscriber in the constructor
   //but state changing is put in case any error happens with the stream
-  Future<void> SignOut() async {
+  Future<void> signOut() async {
     await _auth.signOut();
     _currentUser = _auth.user;
     _loginState = LoginState.signedOut;
