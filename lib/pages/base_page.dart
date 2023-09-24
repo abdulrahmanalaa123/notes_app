@@ -1,12 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:notes_app/models/notes.dart';
-import 'package:notes_app/models/notes_data.dart';
 import 'package:notes_app/view_models/multi_select_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:notes_app/view_models/notes_view_model/notes_view_model.dart';
-import '../constants/style_constants.dart';
 import '../ui_components/main_page/main_page_layout.dart';
 
 //TODO
@@ -31,14 +26,6 @@ class _BasePageState extends State<BasePage> {
     //in the context
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       await Provider.of<NotesViewModel>(context, listen: false).init();
-      await Provider.of<NotesViewModel>(context, listen: false).addNote(Note(
-          createdAt: DateTime.now(),
-          noteData: NoteData(
-              title: 'test noteView',
-              body: 'wahtevere',
-              description:
-                  'this is a logn description to repressent my notes capabilitesnhhhhhhhhhhhhhhhhhhhhnhhhhhhhhhhhhhhhhhhhhhhhhhhhhh',
-              color: Constants.listOfColors[Random().nextInt(5)])));
     });
     setState(() {
       _initialized = true;

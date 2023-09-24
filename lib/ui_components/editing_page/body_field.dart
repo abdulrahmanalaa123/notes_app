@@ -16,6 +16,7 @@ class BodyField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: TextField(
+        //which basically means if youre in an editing state
         autofocus: titleController.text.isNotEmpty ? true : false,
         keyboardType: TextInputType.multiline,
         //left here before it was null
