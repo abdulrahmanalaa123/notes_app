@@ -40,8 +40,10 @@ class CheckableNoteCardComponent extends StatelessWidget {
                 height: 16,
               ),
               Text(
-                note.noteData.description!,
-                maxLines: 5,
+                note.noteData.description!.isNotEmpty
+                    ? note.noteData.description!
+                    : note.noteData.body,
+                maxLines: 7,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.left,
               ),

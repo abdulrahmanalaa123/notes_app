@@ -35,7 +35,6 @@ class _BasePageState extends State<BasePage> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    print('modal route ffs');
     final modalRoute = ModalRoute.of(context)?.isActive;
     if (modalRoute != null && modalRoute && !_initialized) {
       customInit();

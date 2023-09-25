@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes_app/ui_components/authentication_components/indicator.dart';
+import 'package:notes_app/models/indicator.dart';
 import 'package:notes_app/constants/style_constants.dart';
 
 class LoadingIndicator extends Indicators {

@@ -146,4 +146,14 @@ class NoteData {
 
     return initialMap;
   }
+
+  factory NoteData.copy(NoteData other) => NoteData(
+      title: other.title,
+      body: other.body,
+      description: other.description,
+      imgPaths: other.imgPaths,
+      isFavorite: other.isFavorite,
+      lastEdited: other.lastEdited,
+      groups: other.groups,
+      color: other.color);
 }

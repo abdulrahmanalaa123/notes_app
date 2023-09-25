@@ -31,7 +31,9 @@ class LoadingPage {
         );
       }
     } on FirebaseAuthException catch (e) {
-      loadingIndicator.dismiss();
+      if (context.mounted) {
+        loadingIndicator.dismiss();
+      }
       //using the code to get my custom error messages what is easier is to get Firebase error message right away using e.message
       WidgetsBinding.instance.addPostFrameCallback((_) async =>
           await errorIndicator.show(context,
@@ -56,7 +58,10 @@ class LoadingPage {
         );
       }
     } on FirebaseAuthException catch (e) {
-      loadingIndicator.dismiss();
+      if (context.mounted) {
+        loadingIndicator.dismiss();
+      }
+
       //using the code to get my custom error messages what is easier is to get Firebase error message right away using e.message
       WidgetsBinding.instance.addPostFrameCallback((_) async =>
           await errorIndicator.show(context,

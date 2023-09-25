@@ -180,8 +180,10 @@ class SqlHelper {
       //if not just use rawQuery well i dont know how to generalize this class this is the best i can do
       //really my mind is just giving up on this so this is the best ive reached so far
       try {
-        await db.update(table!, data!, where: 'id = ?', whereArgs: [id]);
-        return true;
+        int count =
+            await db.update(table!, data!, where: 'id = ?', whereArgs: [id]);
+        if (count > 0) return true;
+        return false;
       } catch (e) {
         if (e is DatabaseException) {
           rethrow;
@@ -225,11 +227,13 @@ class SqlHelper {
       //if not just use rawQuery well i dont know how to generalize this class this is the best i can do
       //really my mind is just giving up on this so this is the best ive reached so far
       try {
-        int ho = await db.delete(table!,
+        int count = await db.delete(table!,
             where: id != null ? "id = ?" : 'user_id = ?',
             whereArgs: id != null ? [id] : [userId]);
-        print('deleted counts are: $ho');
-        return true;
+        //since i dont call this method except on solid deletes and i have my filter
+        //for each operation done so it should delete if it doesnt then something is wrong
+        if (count > 0) return true;
+        return false;
       } catch (e) {
         // if it is a database exception i can return false instead of rethrowing idk yet
         //of the best design choice

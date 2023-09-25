@@ -42,8 +42,10 @@ class _EditNoteState extends State<EditNote> {
 
   void _switchColors(Color newColor) {
     setState(() {
-      color = newColor;
-      excludedColor = _excludeColor();
+      if (newColor != color) {
+        color = newColor;
+        excludedColor = _excludeColor();
+      }
     });
   }
 
