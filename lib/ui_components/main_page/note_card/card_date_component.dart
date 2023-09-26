@@ -14,7 +14,7 @@ class CardDateComponent extends StatelessWidget {
   final Note note;
   String _dateParsingFunc() {
     final now = DateTime.now();
-    final difference = note.noteData.lastEdited!.difference(now);
+    final difference = now.difference(note.noteData.lastEdited!);
 
     if (!note.createdAt.isAtSameMomentAs(note.noteData.lastEdited!)) {
       if (difference.inDays > 0) {
@@ -30,6 +30,7 @@ class CardDateComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //actually i dont know how does it work but fuck it
     final date = _dateParsingFunc();
 
     return Row(
