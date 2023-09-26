@@ -156,4 +156,21 @@ class NoteData {
       lastEdited: other.lastEdited,
       groups: other.groups,
       color: other.color);
+  factory NoteData.copyWith(
+    NoteData other, {
+    String? newName,
+    String? newText,
+    String? newDescription,
+    int? favorite,
+    Color? newColor,
+  }) =>
+      NoteData(
+          title: newName ?? other.title,
+          body: newText ?? other.body,
+          description: newDescription ?? other.description,
+          imgPaths: other.imgPaths,
+          isFavorite: favorite ?? other.isFavorite,
+          lastEdited: other.lastEdited,
+          groups: other.groups,
+          color: newColor ?? other.color);
 }

@@ -21,7 +21,9 @@ class AddGroupButton extends StatelessWidget {
               return const AddGroupDialog();
             });
         if (groupName != null && context.mounted) {
-          await context.read<NotesViewModel>().addGroup(groupName: groupName);
+          final viewModel = context.read<NotesViewModel>();
+          await viewModel.notesErrorIndicator.oneInputFuncWrapper<void, String>(
+              func: viewModel.addGroup, object: groupName, context: context);
         }
       },
       child: Container(

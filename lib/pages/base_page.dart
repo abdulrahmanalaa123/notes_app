@@ -25,7 +25,9 @@ class _BasePageState extends State<BasePage> {
     //to ensure everything is built and not perform inconsistencies
     //in the context
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      await Provider.of<NotesViewModel>(context, listen: false).init();
+      final viewModel = context.read<NotesViewModel>();
+      await viewModel.notesErrorIndicator
+          .noInputFuncWrapper<void>(func: viewModel.init, context: context);
     });
     setState(() {
       _initialized = true;

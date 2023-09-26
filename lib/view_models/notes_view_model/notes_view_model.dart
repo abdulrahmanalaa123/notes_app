@@ -33,6 +33,7 @@ class NotesViewModel extends ChangeNotifier {
 
   Future<void> init() async {
     await _noteRepo.init();
+
     await readAll();
     await readAllGroups();
   }
@@ -110,7 +111,7 @@ class NotesViewModel extends ChangeNotifier {
     super.dispose();
   }
 
-  Future<void> addGroup({required String groupName}) async {
+  Future<void> addGroup(String groupName) async {
     Group requiredGroup = Group(groupName: groupName);
     bool state = await _noteRepo.addGroup(requiredGroup);
     if (state) {
@@ -166,8 +167,7 @@ class NotesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeNotesFromGroup(
-      {required Iterable<Note> notes, required Group group}) async {
+  Future<void> removeNotesFromGroup(Iterable<Note> notes, Group group) async {
     Future.wait(notes.map((e) async {
       await _removeNoteFromGroup(group: group, note: e);
     }));
@@ -175,8 +175,7 @@ class NotesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addNotesToGroup(
-      {required Iterable<Note> notes, required Group group}) async {
+  Future<void> addNotesToGroup(Iterable<Note> notes, Group group) async {
     Future.wait(notes.map((e) async {
       await _addNoteToGroup(group: group, note: e);
     }));
@@ -200,13 +199,9 @@ class NotesViewModel extends ChangeNotifier {
   //and the groups adding functionality in the editing phase
   //so probably i wont do so fuck it
   Future<void> editNote(
-    Note note, {
-    String? newName,
-    String? newText,
-    String? newDescription,
-    int? favorite,
-    Color? newColor,
-  }) async {
+    Note note,
+    NoteData newNoteData,
+  ) async {
     NoteData rollBackData = NoteData.copy(note.noteData);
 
     //supposedly this would be from the notepage and
@@ -216,12 +211,14 @@ class NotesViewModel extends ChangeNotifier {
     //then element reference
     //it gets an element reference which is good
 
+    //here its not a copy because
+    //i only need the new fields dont need imgPaths and groups
     note.noteData.editFields(
-        newName: newName,
-        newText: newText,
-        newDescription: newDescription,
-        newColor: newColor,
-        favorite: favorite);
+        newName: newNoteData.title,
+        newText: newNoteData.body,
+        newDescription: newNoteData.description,
+        newColor: newNoteData.color,
+        favorite: newNoteData.isFavorite);
 
     //i give it a new note just to edit so i must edit the past note or i could give a new note the same id
     //it would literally be the same as the rollback method so fuck it
@@ -233,12 +230,7 @@ class NotesViewModel extends ChangeNotifier {
       notifyListeners();
     } else {
       //revert the data if it hasnt changed
-      note.noteData.editFields(
-          newName: rollBackData.title,
-          newText: rollBackData.body,
-          newDescription: rollBackData.description,
-          newColor: rollBackData.color,
-          favorite: rollBackData.isFavorite);
+      note.noteData = NoteData.copy(rollBackData);
     }
   }
 
@@ -271,15 +263,12 @@ class NotesViewModel extends ChangeNotifier {
 
   Future<void> readAll() async {
     _notesList = await _noteRepo.readAll();
-    if (_notesList.isNotEmpty) {
-      notifyListeners();
-    }
+    //dont know if this is useful maybe just notify listeners its pointless
+    notifyListeners();
   }
 
   Future<void> readAllGroups() async {
     groupList.addAll(await _noteRepo.readAllGroups());
-    if (groupList.isNotEmpty) {
-      notifyListeners();
-    }
+    notifyListeners();
   }
 }

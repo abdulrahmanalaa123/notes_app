@@ -27,6 +27,7 @@ class NotesErrorIndicator {
       required R object,
       required BuildContext context}) async {
     try {
+      print('wea re here $object');
       return await func(object);
     } on DatabaseException catch (e) {
       WidgetsBinding.instance.addPostFrameCallback(
@@ -36,16 +37,12 @@ class NotesErrorIndicator {
   }
 
   Future<T?> twoInputFuncWrapper<T, R, G>(
-      {required Future<T> Function(R object, G? object2) func,
+      {required Future<T> Function(R object, G object2) func,
       required R object,
-      G? object2,
+      required G object2,
       required BuildContext context}) async {
     try {
-      if (object2 != null) {
-        return await func(object, object2);
-      } else {
-        return await func(object, null);
-      }
+      return await func(object, object2);
     } on DatabaseException catch (e) {
       WidgetsBinding.instance.addPostFrameCallback(
           (_) async => await errorIndicator.show(context, text: e.toString()));

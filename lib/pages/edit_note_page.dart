@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -70,24 +72,34 @@ class _EditNoteState extends State<EditNote> {
       state = state1 || state2 || state3 || state4;
     } else {
       if (titleController.text.isNotEmpty) {
-        await context.read<NotesViewModel>().addNote(Note(
-            createdAt: DateTime.now(),
-            noteData: NoteData(
-                title: titleController.text,
-                body: bodyController.text,
-                description: descriptionController.text,
-                color: color)));
+        final viewModel = context.read<NotesViewModel>();
+        await viewModel.notesErrorIndicator.oneInputFuncWrapper<void, Note>(
+            func: viewModel.addNote,
+            object: Note(
+                createdAt: DateTime.now(),
+                noteData: NoteData(
+                    title: titleController.text,
+                    body: bodyController.text,
+                    description: descriptionController.text,
+                    color: color)),
+            context: context);
       }
     }
     if (state) {
-      //state will never be true unless it checks in the firstplace
+      final viewModel = context.read<NotesViewModel>();
+      //state will never be true unless it checks in the first place
       //context will never be used or in an async gap since the above
       //functions will never intertwine so ill disregard the warning
-      await context.read<NotesViewModel>().editNote(note!,
-          newName: titleController.text,
-          newText: bodyController.text,
-          newDescription: descriptionController.text,
-          newColor: color);
+      await viewModel.notesErrorIndicator
+          .twoInputFuncWrapper<void, Note, NoteData>(
+              func: viewModel.editNote,
+              object: note!,
+              object2: NoteData(
+                  title: titleController.text,
+                  body: bodyController.text,
+                  description: descriptionController.text,
+                  color: color),
+              context: context);
     }
     if (context.mounted) Navigator.of(context).pop();
   }

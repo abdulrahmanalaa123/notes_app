@@ -3,6 +3,7 @@ import 'package:notes_app/constants/more_options.dart';
 import 'package:notes_app/view_models/notes_view_model/notes_view_model.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/group.dart';
 import '../../../models/notes.dart';
 import '../../../pages/edit_note_page.dart';
 
@@ -44,9 +45,11 @@ class OptionsButton extends StatelessWidget {
         ),
         MenuItemButton(
           onPressed: () async {
+            final viewModel = context.read<NotesViewModel>();
             //tested that it doesnt need to await to perform the fucntion
             //since its fast i think but await is left for correctness
-            await context.read<NotesViewModel>().removeNote(note);
+            await viewModel.notesErrorIndicator.oneInputFuncWrapper<void, Note>(
+                func: viewModel.removeNote, object: note, context: context);
           },
           child: Text(Options.options[1]),
         ),
@@ -59,9 +62,13 @@ class OptionsButton extends StatelessWidget {
           menuChildren: groupList
               .map((e) => MenuItemButton(
                     onPressed: () async {
-                      await context
-                          .read<NotesViewModel>()
-                          .addNotesToGroup(notes: [note], group: e);
+                      final viewModel = context.read<NotesViewModel>();
+                      await viewModel.notesErrorIndicator
+                          .twoInputFuncWrapper<void, List<Note>, Group>(
+                              func: viewModel.addNotesToGroup,
+                              object: [note],
+                              object2: e,
+                              context: context);
                     },
                     child: Text(e.groupName),
                   ))
@@ -77,9 +84,13 @@ class OptionsButton extends StatelessWidget {
               menuChildren: note.noteData.groups!
                   .map((e) => MenuItemButton(
                         onPressed: () async {
-                          await context
-                              .read<NotesViewModel>()
-                              .removeNotesFromGroup(notes: [note], group: e);
+                          final viewModel = context.read<NotesViewModel>();
+                          await viewModel.notesErrorIndicator
+                              .twoInputFuncWrapper<void, List<Note>, Group>(
+                                  func: viewModel.removeNotesFromGroup,
+                                  object: [note],
+                                  object2: e,
+                                  context: context);
                         },
                         child: Text(e.groupName),
                       ))
@@ -89,9 +100,13 @@ class OptionsButton extends StatelessWidget {
           else
             MenuItemButton(
               onPressed: () async {
-                await context
-                    .read<NotesViewModel>()
-                    .removeNotesFromGroup(notes: [note], group: selectedGroup);
+                final viewModel = context.read<NotesViewModel>();
+                await viewModel.notesErrorIndicator
+                    .twoInputFuncWrapper<void, List<Note>, Group>(
+                        func: viewModel.removeNotesFromGroup,
+                        object: [note],
+                        object2: selectedGroup,
+                        context: context);
               },
               child: Text(Options.options[3]),
             ),

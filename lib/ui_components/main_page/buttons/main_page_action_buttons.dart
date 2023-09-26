@@ -40,7 +40,11 @@ class MainModeActionButtons extends StatelessWidget {
           IconButton(
               onPressed: () async {
                 final viewModel = context.read<NotesViewModel>();
-                await viewModel.removeGroup(selectedGroup);
+                await viewModel.notesErrorIndicator
+                    .oneInputFuncWrapper<void, Group>(
+                        func: viewModel.removeGroup,
+                        object: selectedGroup,
+                        context: context);
                 //return to All notes
                 viewModel.switchIndex(-1);
               },

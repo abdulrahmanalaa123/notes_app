@@ -28,6 +28,9 @@ class _AddGroupDialogState extends State<AddGroupDialog> {
 
   @override
   Widget build(BuildContext context) {
+    //coudlve put it in an willpopscope but didnt
+    //since i only return a value if it has text and pressed the button
+    //and if not it would return null as the basic functionality of the showdialog
     return GestureDetector(
       onTap: () {
         if (!FocusScope.of(context).hasPrimaryFocus) {

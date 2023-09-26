@@ -21,8 +21,8 @@ class MultiSelectActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     //this limits us to not using a height constraint on the glass container
     //since if you use column its endless
-    return IntrinsicWidth(
-      stepHeight: 70,
+    return SizedBox(
+      height: 70,
       child: Column(
         children: [
           IconButton(

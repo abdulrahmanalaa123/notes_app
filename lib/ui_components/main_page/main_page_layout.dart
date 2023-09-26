@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes_app/ui_components/main_page/welcome_text.dart';
+import 'package:notes_app/ui_components/main_page/group_text_identifier.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/style_constants.dart';

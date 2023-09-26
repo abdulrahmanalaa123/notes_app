@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/notes.dart';
+import '../../../models/notes_data.dart';
 import '../../../view_models/notes_view_model/notes_view_model.dart';
 
 class HeartButton extends StatelessWidget {
@@ -12,11 +13,22 @@ class HeartButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: () {
+      onPressed: () async {
+        final viewModel = context.read<NotesViewModel>();
         if (note.noteData.isFavorite == 0) {
-          context.read<NotesViewModel>().editNote(note, favorite: 1);
+          await viewModel.notesErrorIndicator
+              .twoInputFuncWrapper<void, Note, NoteData>(
+                  func: viewModel.editNote,
+                  object: note,
+                  object2: NoteData.copyWith(note.noteData, favorite: 1),
+                  context: context);
         } else {
-          context.read<NotesViewModel>().editNote(note, favorite: 0);
+          await viewModel.notesErrorIndicator
+              .twoInputFuncWrapper<void, Note, NoteData>(
+                  func: viewModel.editNote,
+                  object: note,
+                  object2: NoteData.copyWith(note.noteData, favorite: 0),
+                  context: context);
         }
       },
       icon: note.noteData.isFavorite == 0

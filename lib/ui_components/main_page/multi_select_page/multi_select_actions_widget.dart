@@ -38,7 +38,12 @@ class MultiSelectActions extends StatelessWidget {
           asyncFunc: () async {
             final List<Note> selectedList =
                 context.read<MultiSelect>().checkSet.toList();
-            await context.read<NotesViewModel>().removeListOfNote(selectedList);
+            final viewModel = context.read<NotesViewModel>();
+            await viewModel.notesErrorIndicator
+                .oneInputFuncWrapper<void, List<Note>>(
+                    func: viewModel.removeListOfNote,
+                    object: selectedList,
+                    context: context);
             if (context.mounted) {
               context.read<MultiSelect>().clear();
             }
@@ -55,9 +60,13 @@ class MultiSelectActions extends StatelessWidget {
             func: () async {
               final List<Note> selectedList =
                   context.read<MultiSelect>().checkSet.toList();
-              print('selected Group: $selectedGroup');
-              await context.read<NotesViewModel>().removeNotesFromGroup(
-                  notes: selectedList, group: selectedGroup);
+              final viewModel = context.read<NotesViewModel>();
+              await viewModel.notesErrorIndicator
+                  .twoInputFuncWrapper<void, List<Note>, Group>(
+                      func: viewModel.removeNotesFromGroup,
+                      object: selectedList,
+                      object2: selectedGroup,
+                      context: context);
             },
           ),
         const SizedBox(
